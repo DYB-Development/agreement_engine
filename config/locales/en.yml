@@ -1,5 +1,5 @@
 en:
-  fine_print:
+  agreement_engine:
     agreements:
       show:
         title: "%{agreement} Changed"

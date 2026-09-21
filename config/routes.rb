@@ -1,4 +1,4 @@
-FinePrint::Engine.routes.draw do
+AgreementEngine::Engine.routes.draw do
   resources :agreements, only: [:show, :update, :destroy]
 
   get "terms", to: "documents#terms", as: :terms

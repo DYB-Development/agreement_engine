@@ -1,4 +1,4 @@
-# FinePrint
+# AgreementEngine
 
 Versioned legal document management for Rails. Track and enforce user acceptance of Terms of Service, Privacy Policy, and other legal agreements with versioned documents and audit trails.
 
@@ -7,14 +7,14 @@ Versioned legal document management for Rails. Track and enforce user acceptance
 Add to your Gemfile:
 
 ```ruby
-gem "fine_print"
+gem "agreement_engine"
 ```
 
 Then run:
 
 ```bash
 bundle install
-rails fine_print:install:migrations
+rails agreement_engine:install:migrations
 rails db:migrate
 ```
 
@@ -22,19 +22,19 @@ rails db:migrate
 
 ### 1. Configure agreements
 
-Create `config/initializers/fine_print.rb`:
+Create `config/initializers/agreement_engine.rb`:
 
 ```ruby
-FinePrint.configure do |config|
+AgreementEngine.configure do |config|
   config.agreements = [
-    FinePrint::Agreement.new(
+    AgreementEngine::Agreement.new(
       id: :terms_of_service,
       title: "Terms Of Service",
       version_column: :accepted_terms_of_service_version_id,
       document_type: :terms_of_service,
       prompt_when_updated: true
     ),
-    FinePrint::Agreement.new(
+    AgreementEngine::Agreement.new(
       id: :privacy_policy,
       title: "Privacy Policy",
       version_column: :accepted_privacy_policy_version_id,
@@ -50,12 +50,12 @@ end
 ```ruby
 # app/models/user.rb
 class User < ApplicationRecord
-  include FinePrint::Signable
+  include AgreementEngine::Signable
 end
 
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  include FinePrint::Enforceable
+  include AgreementEngine::Enforceable
 end
 ```
 
@@ -63,21 +63,21 @@ end
 
 ```ruby
 # config/routes.rb
-mount FinePrint::Engine, at: "/"
+mount AgreementEngine::Engine, at: "/"
 ```
 
 ### 4. Seed initial documents
 
 ```bash
-rails fine_print:seed
+rails agreement_engine:seed
 ```
 
 ## Auth Configuration
 
-FinePrint defaults to Devise conventions. Override for other auth systems:
+AgreementEngine defaults to Devise conventions. Override for other auth systems:
 
 ```ruby
-FinePrint.configure do |config|
+AgreementEngine.configure do |config|
   config.current_user_method = ->(c) { c.current_user }
   config.signed_in_method = ->(c) { c.user_signed_in? }
   config.auth_controller_method = ->(c) { c.devise_controller? }

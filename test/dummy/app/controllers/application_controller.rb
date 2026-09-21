@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  include FinePrint::Enforceable
+  include AgreementEngine::Enforceable
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id])
