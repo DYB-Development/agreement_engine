@@ -26,5 +26,9 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
+  # json 3 dropped the second argument ActiveSupport::JSON.decode passes it, so
+  # every read of a json column raises until Rails ships a release that calls
+  # the new interface.
+  spec.add_dependency "json", "< 3"
   spec.add_dependency "rails", ">= 7.1"
 end
