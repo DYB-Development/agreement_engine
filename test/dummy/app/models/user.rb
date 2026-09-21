@@ -1,3 +1,3 @@
 class User < ApplicationRecord
-  include FinePrint::Signable
+  include AgreementEngine::Signable
 end

@@ -1,5 +1,5 @@
 ActiveRecord::Schema[8.0].define(version: 1) do
-  create_table :fine_print_documents do |t|
+  create_table :agreement_engine_documents do |t|
     t.string :document_type, null: false
     t.string :version, null: false
     t.datetime :effective_at
@@ -8,8 +8,8 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.timestamps
   end
 
-  add_index :fine_print_documents, [:document_type, :version], unique: true
-  add_index :fine_print_documents, [:document_type, :effective_at]
+  add_index :agreement_engine_documents, [:document_type, :version], unique: true
+  add_index :agreement_engine_documents, [:document_type, :effective_at]
 
   create_table :action_text_rich_texts do |t|
     t.string :name, null: false
@@ -62,6 +62,6 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.timestamps
   end
 
-  add_foreign_key :users, :fine_print_documents, column: :accepted_terms_of_service_version_id
-  add_foreign_key :users, :fine_print_documents, column: :accepted_privacy_policy_version_id
+  add_foreign_key :users, :agreement_engine_documents, column: :accepted_terms_of_service_version_id
+  add_foreign_key :users, :agreement_engine_documents, column: :accepted_privacy_policy_version_id
 end

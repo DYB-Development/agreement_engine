@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount FinePrint::Engine, at: "/"
+  mount AgreementEngine::Engine, at: "/"
 
   root to: "home#index"
 

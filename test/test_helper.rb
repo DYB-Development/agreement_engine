@@ -15,7 +15,7 @@ load File.expand_path("dummy/db/schema.rb", __dir__)
 
 class ActiveSupport::TestCase
   setup do
-    FinePrint::Document.destroy_all
+    AgreementEngine::Document.destroy_all
     User.destroy_all
   end
 end

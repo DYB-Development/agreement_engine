@@ -3,7 +3,7 @@ require_relative "boot"
 require "rails/all"
 
 Bundler.require(*Rails.groups)
-require "fine_print"
+require "agreement_engine"
 
 module Dummy
   class Application < Rails::Application
