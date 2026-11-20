@@ -51,4 +51,21 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     assert_select "div", text: "Type your full name to sign."
   end
+
+  test "a signature records the typed name, the consent it relied on and the document hash" do
+    give_consent
+
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee"}}
+
+    signature = AgreementEngine::Acceptance.where(document: @sow).last
+    assert_equal ["signature", "Pat Lee", @consent.id, @sow.content_hash], [signature.strength, signature.typed_name, signature.consent_id, signature.content_hash]
+  end
+
+  test "a signature records the signing statement and button text shown" do
+    give_consent
+
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee"}}
+
+    assert_equal "Sign", AgreementEngine::Acceptance.where(document: @sow).last.button_text
+  end
 end

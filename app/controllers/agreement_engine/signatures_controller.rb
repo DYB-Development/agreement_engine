@@ -17,7 +17,16 @@ module AgreementEngine
         @error = t("agreement_engine.signatures.update.blank")
         render :show, status: :unprocessable_entity
       else
-        redirect_to main_app.root_path, status: :see_other
+        AgreementEngine::Acceptance.record!(
+          signer: signer,
+          document: @version,
+          request: request,
+          statement: t("agreement_engine.signatures.show.statement", document: @type.title),
+          button_text: t("agreement_engine.signatures.show.sign"),
+          evidence: AgreementEngine.config.evidence(self, signer),
+          signature: {strength: "signature", typed_name: typed_name, consent: signer.held_consent}
+        )
+        redirect_to main_app.root_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       end
     end
 

@@ -26,3 +26,4 @@ en:
         sign: "Sign"
       update:
         blank: "Type your full name to sign."
+        signed: "You signed the %{document}."

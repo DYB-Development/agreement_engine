@@ -12,8 +12,9 @@ module AgreementEngine
 
     belongs_to :document, class_name: "AgreementEngine::Document"
     has_one :consent_withdrawal, class_name: "AgreementEngine::ConsentWithdrawal"
+    belongs_to :consent, class_name: "AgreementEngine::Acceptance", optional: true
 
-    def self.record!(signer:, document:, request:, statement:, button_text:, evidence: {})
+    def self.record!(signer:, document:, request:, statement:, button_text:, evidence: {}, signature: {})
       create!(
         signer: signer,
         person: person_snapshot(signer).merge(evidence[:person].to_h.stringify_keys),
@@ -28,7 +29,8 @@ module AgreementEngine
         ip_address: request.remote_ip,
         user_agent: request.user_agent,
         statement: statement,
-        button_text: button_text
+        button_text: button_text,
+        **signature
       )
     end
 

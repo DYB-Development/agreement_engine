@@ -54,6 +54,9 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.json :sign_in
     t.string :engine_version
     t.string :pages_version
+    t.string :strength, null: false, default: "click_accept"
+    t.string :typed_name
+    t.references :consent
 
     t.timestamps
   end
