@@ -57,4 +57,18 @@ class AgreementEngine::IssuedDocumentTest < ActiveSupport::TestCase
 
     assert issued.reload.source_moved?
   end
+
+  test "issuing from a page holding an element that cannot be drawn as a PDF is refused naming the element" do
+    KeystoneUi::Pages.catalog.register(key: :wiggle, name: "Wiggle", component: :ui_caption, fields: [{key: :text, label: "Text", kind: :text}])
+    document = KeystoneUi::Pages::Document.blank
+    document["sections"][0]["rows"][0]["columns"][0]["elements"] << {"id" => "w1", "key" => "wiggle", "fields" => {"text" => "Hi"}}
+    page = KeystoneUi::Pages::Page.create!(name: "Odd", slug: "odd", document: document)
+    page.publish
+
+    error = assert_raises(ActiveRecord::RecordInvalid) { AgreementEngine::Document.issue!(type: :terms_of_service, page_version: page.live_version, version: "9.0", effective_at: 1.day.ago) }
+
+    assert_includes error.message, "The Wiggle element cannot be drawn as a PDF"
+  ensure
+    KeystoneUi::Pages.catalog.leave_out(:wiggle)
+  end
 end

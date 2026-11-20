@@ -2,6 +2,10 @@
 
 module AgreementEngine
   class ReceiptMailer < ActionMailer::Base
+    rescue_from StandardError do |error|
+      Rails.error.report(error, handled: true, source: "agreement_engine")
+    end
+
     def copy(acceptance)
       @acceptance = acceptance
       @type = AgreementEngine.document_type(acceptance.document.document_type)

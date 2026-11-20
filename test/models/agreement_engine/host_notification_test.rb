@@ -29,7 +29,7 @@ class AgreementEngine::HostNotificationTest < ActiveSupport::TestCase
     record_document = AgreementEngine::Document.create!(document_type: "plan_sign_off", version: "1", content: "Plan", effective_at: Time.current, subject: @user)
 
     AgreementEngine::Acceptance.create!(signer: @user, document: record_document, accepted_at: Time.current, strength: "signature")
-    AgreementEngine::Acceptance.create!(signer: @user, document: record_document, accepted_at: Time.current, strength: "signature")
+    AgreementEngine::Acceptance.create!(signer: User.create!(name: "Second Signer", email: "second@example.com"), document: record_document, accepted_at: Time.current, strength: "signature")
 
     assert_equal [true, false], @told.map(&:first_signature?)
   end
