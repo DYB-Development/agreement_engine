@@ -8,6 +8,7 @@ module AgreementEngine
 
     initializer "agreement_engine.pages_elements" do
       AgreementEngine::PagesElements.register(KeystoneUi::Pages.catalog)
+      ActiveSupport.on_load(:action_view) { include AgreementEngine::PagesElements::Drawing }
     end
 
     initializer "agreement_engine.url_helpers" do

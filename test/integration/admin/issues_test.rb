@@ -66,6 +66,19 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_select "dd", text: "terms, version 1"
   end
 
+  test "a numbered list in an issued version is drawn as a numbered list" do
+    sign_in(@admin)
+    document = KeystoneUi::Pages::Document.blank
+    document["sections"][0]["rows"][0]["columns"][0]["elements"] << {"id" => "list-1", "key" => "legal_list", "fields" => {"style" => "numbered", "items" => [{"text" => "Pay on time"}, {"text" => "Keep it private"}]}}
+    page = KeystoneUi::Pages::Page.create!(name: "Contract", slug: "contract", document: document)
+    page.publish
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: page.live_version, version: "2.0", effective_at: 1.day.ago)
+
+    get agreement_engine.admin_document_path(issued)
+
+    assert_select "ol li", text: "Keep it private"
+  end
+
   private
 
   def document_with_heading(text)

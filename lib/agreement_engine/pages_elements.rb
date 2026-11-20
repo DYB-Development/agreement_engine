@@ -10,5 +10,13 @@ module AgreementEngine
           {key: :items, label: "Items", kind: :list, entry: [{key: :text, label: "Text", kind: :long_text}],
            default: [{"text" => "First item"}, {"text" => "Second item"}]}])
     end
+
+    module Drawing
+      def agreement_engine_legal_list(style:, items:)
+        tag.public_send(style == :numbered ? :ol : :ul, class: style == :numbered ? "list-decimal pl-6" : "list-disc pl-6") do
+          safe_join(items.map { |item| tag.li(item[:text]) })
+        end
+      end
+    end
   end
 end
