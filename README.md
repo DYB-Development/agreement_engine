@@ -79,7 +79,13 @@ rails agreement_engine:seed
 ```
 
 The seed task issues a starting version for every registered standing type
-that has none, from a page you then edit in the builder.
+that has none, from a page you then edit in the builder. A host that registers
+keystone_ui-pages places names the place those pages go in:
+
+```ruby
+KeystoneUi::Pages.register_place("legal", label: "Legal documents", slug: false)
+AgreementEngine.configure { |config| config.pages_place = "legal" }
+```
 
 ## Acceptance evidence
 

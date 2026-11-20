@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2026-11-20
+
+### Added
+
+- `config.pages_place` names the keystone_ui-pages place the seed task and the upgrade create their pages in, for hosts that register places
+
 ## [0.2.1] - 2026-11-20
 
 ### Fixed
