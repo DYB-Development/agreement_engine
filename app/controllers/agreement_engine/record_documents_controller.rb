@@ -11,7 +11,15 @@ module AgreementEngine
     end
 
     def form_url
-      agreement_engine.record_document_path(@version)
+      agreement_engine.record_document_path(@version, return_to: return_path)
+    end
+
+    def after_signing_path
+      return_path || super
+    end
+
+    def return_path
+      AgreementEngine.config.allowed_return_path(params[:return_to])
     end
   end
 end

@@ -48,4 +48,26 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
 
     assert_equal 0, @plan_document.acceptances.count
   end
+
+  test "after signing, the person is sent to the page on the host's site the link named" do
+    patch agreement_engine.record_document_path(@plan_document, return_to: "/plans/abc"), params: {signature: {typed_name: "Acme Co"}}
+
+    assert_redirected_to "/plans/abc"
+  end
+
+  test "a return address on another site is ignored" do
+    patch agreement_engine.record_document_path(@plan_document, return_to: "https://evil.example/steal"), params: {signature: {typed_name: "Acme Co"}}
+
+    assert_redirected_to "/"
+  end
+
+  test "a return address the host's check refuses is ignored" do
+    AgreementEngine.config.return_check_method = ->(path) { path.start_with?("/plans/") }
+
+    patch agreement_engine.record_document_path(@plan_document, return_to: "/admin/secret"), params: {signature: {typed_name: "Acme Co"}}
+
+    assert_redirected_to "/"
+  ensure
+    AgreementEngine.config.return_check_method = nil
+  end
 end
