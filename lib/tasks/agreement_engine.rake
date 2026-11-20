@@ -14,4 +14,13 @@ namespace :agreement_engine do
     end
     puts "Upgrade done."
   end
+
+  desc "List every issued version and acceptance whose hashes disagree, and fail when one is found"
+  task check_hashes: :environment do
+    problems = AgreementEngine::Integrity.problems
+    problems.each { |problem| puts problem }
+    abort "#{problems.size} hash problem(s) found." if problems.any?
+
+    puts "Every hash agrees."
+  end
 end
