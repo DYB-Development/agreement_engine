@@ -79,6 +79,14 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_select "ol li", text: "Keep it private"
   end
 
+  test "the issue form offers each published page version" do
+    sign_in(@admin)
+
+    get agreement_engine.new_admin_issue_path
+
+    assert_select "option[value='#{@page.live_version.id}']", text: "Terms, version 1"
+  end
+
   private
 
   def document_with_heading(text)

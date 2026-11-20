@@ -6,6 +6,10 @@ module AgreementEngine
       skip_before_action :require_accepted_agreements!, raise: false
       before_action :authenticate_admin!
 
+      def new
+        @page_versions = published_page_versions
+      end
+
       def create
         document = AgreementEngine::Document.issue!(
           type: issue_params[:document_type],
@@ -17,6 +21,10 @@ module AgreementEngine
       end
 
       private
+
+      def published_page_versions
+        KeystoneUi::Pages::Version.live.includes(:page).order(:page_id)
+      end
 
       def authenticate_admin!
         AgreementEngine.config.authenticate_admin!(self)
