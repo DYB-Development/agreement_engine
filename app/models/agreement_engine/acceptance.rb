@@ -37,7 +37,10 @@ module AgreementEngine
     end
 
     def tell_host
-      AgreementEngine.config.acceptance_handler&.call(AcceptanceEvent.new(acceptance: self))
+      handler = AgreementEngine.config.acceptance_handler
+      handler&.call(AcceptanceEvent.for(self))
+    rescue => error
+      Rails.error.report(error, handled: true, source: "agreement_engine")
     end
 
     def self.person_snapshot(signer)
