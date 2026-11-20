@@ -27,6 +27,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Every page draws an issued version from its frozen copy through one partial, which fixes the accept page showing the old rich text
+
 - `config.document_types` is the one place documents are declared, and setting `config.agreements` now fails at boot
 - Every registered standing type has a public page, and the seed task issues a starting version for each
 - The admin pages no longer offer the rich-text editor; versions are issued from published pages

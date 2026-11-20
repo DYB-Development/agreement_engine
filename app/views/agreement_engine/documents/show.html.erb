@@ -8,11 +8,7 @@
       <p class="text-sm text-gray-500 dark:text-gray-400">
         Version <%= @version.version %> - Effective <%= @version.effective_at.strftime("%B %d, %Y") %>
       </p>
-      <% if @version.issued? %>
-        <%= drawn_document(@version.frozen_copy["document"], values: @version.frozen_copy["values"]) %>
-      <% else %>
-        <%= @version.content %>
-      <% end %>
+      <%= render "agreement_engine/documents/issued_version", document: @version %>
     <% else %>
       <p class="text-gray-500"><%= t(".none.#{@type.key}", default: t(".none.default")) %></p>
     <% end %>
