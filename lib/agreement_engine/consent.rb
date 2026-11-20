@@ -20,19 +20,7 @@ module AgreementEngine
     module_function
 
     def seed!
-      return if Document.where(document_type: TYPE.key.to_s).exists?
-
-      page = KeystoneUi::Pages::Page.create!(name: TYPE.title, slug: "electronic-records-consent", document: starting_document)
-      page.publish
-      Document.issue!(type: TYPE.key, page_version: page.live_version, version: "1.0", effective_at: Time.current)
-    end
-
-    def starting_document
-      document = KeystoneUi::Pages::Document.blank
-      document["sections"][0]["rows"][0]["columns"][0]["elements"] = STARTING_TEXT.map do |key, text|
-        {"id" => SecureRandom.uuid, "key" => key.to_s, "fields" => {"text" => text}}
-      end
-      document
+      Seed.issue_starting_version(TYPE, STARTING_TEXT)
     end
   end
 end
