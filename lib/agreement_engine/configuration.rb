@@ -2,7 +2,6 @@
 
 module AgreementEngine
   class Configuration
-    attr_accessor :agreements
     attr_accessor :document_types
     attr_accessor :current_user_method
     attr_accessor :signed_in_method
@@ -19,7 +18,6 @@ module AgreementEngine
     attr_accessor :mailer_from
 
     def initialize
-      @agreements = []
       @document_types = []
       @copy_email_types = []
 
@@ -38,8 +36,12 @@ module AgreementEngine
       }
     end
 
+    def agreements=(_list)
+      raise ArgumentError, "config.agreements was replaced by config.document_types in agreement_engine 0.2. Register each agreement as AgreementEngine::DocumentType.new(key:, title:, kind: :standing, strength: :click_accept, prompts: true)."
+    end
+
     def registered_document_types
-      document_types + agreements.map(&:to_document_type) + (electronic_consent ? [Consent::TYPE] : [])
+      document_types + (electronic_consent ? [Consent::TYPE] : [])
     end
 
     def evidence(controller, signer)

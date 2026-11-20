@@ -1,19 +1,7 @@
 AgreementEngine.configure do |config|
-  config.agreements = [
-    AgreementEngine::Agreement.new(
-      id: :terms_of_service,
-      title: "Terms Of Service",
-      version_column: :accepted_terms_of_service_version_id,
-      document_type: :terms_of_service,
-      prompt_when_updated: true
-    ),
-    AgreementEngine::Agreement.new(
-      id: :privacy_policy,
-      title: "Privacy Policy",
-      version_column: :accepted_privacy_policy_version_id,
-      document_type: :privacy_policy,
-      prompt_when_updated: true
-    )
+  config.document_types = [
+    AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true),
+    AgreementEngine::DocumentType.new(key: :privacy_policy, title: "Privacy Policy", kind: :standing, strength: :click_accept, prompts: true)
   ]
 
   config.current_user_method = ->(c) { c.current_user }
