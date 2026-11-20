@@ -18,4 +18,12 @@ class ReceiptsTest < ActionDispatch::IntegrationTest
 
     assert_equal @acceptance.content_hash, Digest::SHA256.hexdigest(response.body)
   end
+
+  test "a person cannot download a copy of someone else's acceptance" do
+    sign_in User.create!(name: "Someone Else", email: "else@example.com")
+
+    get agreement_engine.byte_form_receipt_path(@acceptance)
+
+    assert_response :not_found
+  end
 end
