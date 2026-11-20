@@ -15,7 +15,8 @@ module AgreementEngine
           type: issue_params[:document_type],
           page_version: KeystoneUi::Pages::Version.find(issue_params[:page_version_id]),
           version: issue_params[:version],
-          effective_at: issue_params[:effective_at]
+          effective_at: issue_params[:effective_at],
+          period: period
         )
         redirect_to agreement_engine.admin_document_path(document), notice: "Version #{document.version} was issued."
       rescue ActiveRecord::RecordInvalid => invalid
@@ -35,7 +36,14 @@ module AgreementEngine
       end
 
       def issue_params
-        params.require(:issue).permit(:document_type, :page_version_id, :version, :effective_at)
+        params.require(:issue).permit(:document_type, :page_version_id, :version, :effective_at, :period_starts_on, :period_ends_on, :period_duration)
+      end
+
+      def period
+        return {"duration" => issue_params[:period_duration]} if issue_params[:period_duration].present?
+        return if issue_params[:period_starts_on].blank? && issue_params[:period_ends_on].blank?
+
+        {"starts_on" => issue_params[:period_starts_on].presence, "ends_on" => issue_params[:period_ends_on].presence}.compact
       end
     end
   end

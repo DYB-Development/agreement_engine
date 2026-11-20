@@ -24,12 +24,12 @@ module AgreementEngine
       yield config
     end
 
-    def issue_for!(type_key, record)
+    def issue_for!(type_key, record, period: nil)
       type = document_type(type_key)
       page_version = KeystoneUi::Pages::Page.find_by!(slug: type.template).live_version
       values = config.values_method.call(record, type).to_h.stringify_keys
       label = (Document.where(document_type: type.key.to_s, subject: record).count + 1).to_s
-      Document.issue!(type: type.key, page_version: page_version, version: label, effective_at: Time.current, subject: record, values: values)
+      Document.issue!(type: type.key, page_version: page_version, version: label, effective_at: Time.current, subject: record, values: values, period: period)
     end
 
     def current_for(type_key, record)

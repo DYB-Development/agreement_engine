@@ -53,4 +53,10 @@ class AgreementEngine::PerRecordDocumentTest < ActiveSupport::TestCase
 
     assert_nil AgreementEngine::Document.current(:plan_sign_off)
   end
+
+  test "host code gives a record's document a period when issuing it" do
+    issued = AgreementEngine.issue_for!(:plan_sign_off, @record, period: {"duration" => "P6M"})
+
+    assert_equal({"duration" => "P6M"}, issued.frozen_copy["period"])
+  end
 end

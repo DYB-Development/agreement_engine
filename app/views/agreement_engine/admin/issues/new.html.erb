@@ -26,6 +26,24 @@
       <%= form.datetime_local_field :effective_at, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
     </div>
 
+    <fieldset class="space-y-2">
+      <legend class="text-sm font-medium text-gray-700">Period, if the document covers one</legend>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div>
+          <%= form.label :period_starts_on, "Starts", class: "block text-sm text-gray-700" %>
+          <%= form.date_field :period_starts_on, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+        </div>
+        <div>
+          <%= form.label :period_ends_on, "Ends", class: "block text-sm text-gray-700" %>
+          <%= form.date_field :period_ends_on, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+        </div>
+      </div>
+      <div>
+        <%= form.label :period_duration, "Or a duration from acceptance", class: "block text-sm text-gray-700" %>
+        <%= form.select :period_duration, [["None", ""], ["1 month", "P1M"], ["3 months", "P3M"], ["6 months", "P6M"], ["1 year", "P1Y"], ["2 years", "P2Y"], ["3 years", "P3Y"]], {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+      </div>
+    </fieldset>
+
     <div>
       <%= form.submit "Issue", class: "btn btn-primary" %>
     </div>
