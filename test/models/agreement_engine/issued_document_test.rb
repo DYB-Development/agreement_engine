@@ -23,4 +23,14 @@ class AgreementEngine::IssuedDocumentTest < ActiveSupport::TestCase
 
     assert_equal first.content_hash, second.content_hash
   end
+
+  test "publishing a page again leaves the issued version in force until an admin issues the new one" do
+    page_version = published_version(slug: "terms", title: "Terms")
+    AgreementEngine::Document.issue!(type: :terms_of_service, page_version: page_version, version: "1.0", effective_at: 1.day.ago)
+
+    page_version.page.edit(page_version.page.document.merge("title" => "Terms, revised"))
+    page_version.page.publish
+
+    assert_equal 1, AgreementEngine::Document.current(:terms_of_service).frozen_copy["number"]
+  end
 end
