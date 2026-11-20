@@ -21,4 +21,8 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
   test "accepting records the IP address" do
     assert_equal "203.0.113.9", accept_terms.ip_address
   end
+
+  test "accepting records the browser" do
+    assert_equal "TestBrowser/1.0", accept_terms.user_agent
+  end
 end

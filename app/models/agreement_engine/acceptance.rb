@@ -14,7 +14,8 @@ module AgreementEngine
         content_hash: document.content_hash,
         byte_form_version: document.byte_form_version,
         accepted_at: Time.current,
-        ip_address: request.remote_ip
+        ip_address: request.remote_ip,
+        user_agent: request.user_agent
       )
     end
   end
