@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
         f.start_with?(*%w[bin/ Gemfile .gitignore test/])
     end
   end
+  spec.bindir = "exe"
+  spec.executables = ["agreement_engine-verify"]
   spec.require_paths = ["lib"]
 
   # json 3 dropped the second argument ActiveSupport::JSON.decode passes it, so
