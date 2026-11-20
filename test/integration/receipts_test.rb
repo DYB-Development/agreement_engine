@@ -45,4 +45,15 @@ class ReceiptsTest < ActionDispatch::IntegrationTest
 
     assert_equal "application/pdf", response.media_type
   end
+
+  test "the byte-form file still downloads when the PDF cannot be drawn" do
+    original = AgreementEngine::Receipt.method(:pdf)
+    AgreementEngine::Receipt.define_singleton_method(:pdf) { |_acceptance| raise KeystoneUi::Pages::PrintFailed, "cannot draw" }
+
+    get agreement_engine.byte_form_receipt_path(@acceptance)
+
+    assert_response :success
+  ensure
+    AgreementEngine::Receipt.define_singleton_method(:pdf, original)
+  end
 end

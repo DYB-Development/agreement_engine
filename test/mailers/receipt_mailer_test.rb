@@ -25,4 +25,21 @@ class ReceiptMailerTest < ActiveSupport::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert_equal [["pat@example.com"], ["terms_of_service-2.0.pdf", "terms_of_service-2.0.json"]], [mail&.to, mail&.attachments&.map(&:filename)]
   end
+
+  test "a copy that cannot be drawn leaves the acceptance recorded and reports the failure" do
+    reported = []
+    subscriber = Object.new.tap { |s| s.define_singleton_method(:report) { |error, **| reported << error.message } }
+    Rails.error.subscribe(subscriber)
+    original = AgreementEngine::Receipt.method(:pdf)
+    AgreementEngine::Receipt.define_singleton_method(:pdf) { |_acceptance| raise KeystoneUi::Pages::PrintFailed, "cannot draw" }
+
+    acceptance = perform_enqueued_jobs do
+      AgreementEngine::Acceptance.create!(signer: @user, document: @terms, content_hash: @terms.content_hash, accepted_at: Time.current, person: {"email" => "pat@example.com"})
+    end
+
+    assert_equal [true, ["cannot draw"]], [AgreementEngine::Acceptance.exists?(acceptance.id), reported]
+  ensure
+    AgreementEngine::Receipt.define_singleton_method(:pdf, original) if original
+    Rails.error.unsubscribe(subscriber) if subscriber
+  end
 end
