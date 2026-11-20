@@ -9,6 +9,7 @@ module AgreementEngine
     attr_accessor :auth_controller_method
     attr_accessor :sign_out_method
     attr_accessor :admin_auth_method
+    attr_accessor :evidence_method
 
     def initialize
       @agreements = []
@@ -31,6 +32,10 @@ module AgreementEngine
 
     def registered_document_types
       document_types + agreements.map(&:to_document_type)
+    end
+
+    def evidence(controller, signer)
+      (evidence_method&.call(controller, signer) || {}).to_h.transform_keys(&:to_sym)
     end
 
     def current_user(controller) = current_user_method.call(controller)

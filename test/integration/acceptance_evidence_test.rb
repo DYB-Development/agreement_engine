@@ -52,4 +52,19 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
 
     assert_equal({"id" => @user.id, "name" => "Pat Lee", "email" => "pat@example.com"}, acceptance.reload.person)
   end
+
+  test "accepting records the account the host's evidence hook names" do
+    with_evidence_hook(->(_controller, _signer) { {account: {"id" => 7, "name" => "Acme"}} }) do
+      assert_equal({"id" => 7, "name" => "Acme"}, accept_terms.account)
+    end
+  end
+
+  private
+
+  def with_evidence_hook(hook)
+    AgreementEngine.config.evidence_method = hook
+    yield
+  ensure
+    AgreementEngine.config.evidence_method = nil
+  end
 end

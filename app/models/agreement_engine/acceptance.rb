@@ -7,10 +7,11 @@ module AgreementEngine
     belongs_to :signer, polymorphic: true
     belongs_to :document, class_name: "AgreementEngine::Document"
 
-    def self.record!(signer:, document:, request:, statement:, button_text:)
+    def self.record!(signer:, document:, request:, statement:, button_text:, evidence: {})
       create!(
         signer: signer,
         person: person_snapshot(signer),
+        account: evidence[:account],
         document: document,
         content_hash: document.content_hash,
         byte_form_version: document.byte_form_version,
