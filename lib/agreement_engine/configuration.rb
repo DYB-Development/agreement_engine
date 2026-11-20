@@ -14,6 +14,7 @@ module AgreementEngine
     attr_accessor :values_method
     attr_accessor :may_sign_method
     attr_accessor :return_check_method
+    attr_accessor :acceptance_handler
 
     def initialize
       @agreements = []

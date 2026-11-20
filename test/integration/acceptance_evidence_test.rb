@@ -77,6 +77,16 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
     assert_nil @user.reload.accepted_terms_of_service_version_id
   end
 
+  test "a person sees the usual result when the host's handler raises" do
+    AgreementEngine.config.acceptance_handler = ->(_event) { raise "host is down" }
+
+    accept_terms
+
+    assert_response :see_other
+  ensure
+    AgreementEngine.config.acceptance_handler = nil
+  end
+
   private
 
   def with_evidence_hook(hook)

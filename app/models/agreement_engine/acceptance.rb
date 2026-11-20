@@ -6,6 +6,8 @@ module AgreementEngine
 
     belongs_to :signer, polymorphic: true
 
+    after_create_commit :tell_host
+
     def readonly?
       persisted?
     end
@@ -32,6 +34,13 @@ module AgreementEngine
         button_text: button_text,
         **signature
       )
+    end
+
+    def tell_host
+      handler = AgreementEngine.config.acceptance_handler
+      handler&.call(AcceptanceEvent.for(self))
+    rescue => error
+      Rails.error.report(error, handled: true, source: "agreement_engine")
     end
 
     def self.person_snapshot(signer)

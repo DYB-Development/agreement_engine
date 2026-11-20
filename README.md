@@ -195,6 +195,25 @@ return address is followed only when it is a path on the host's own site that
 the return check allows. Record documents never trigger the accept redirect and
 never appear on the public pages.
 
+## Being told about acceptances
+
+A host sets one handler, which is called once each acceptance or signature is
+committed:
+
+```ruby
+AgreementEngine.configure do |config|
+  config.acceptance_handler = ->(event) {
+    StartPlanWork.call(event.subject) if event.document_type == :plan_sign_off && event.first_signature?
+  }
+end
+```
+
+The event gives `document_type`, `document`, `person`, `account`, `strength`,
+`subject` (the host record of a per-record document) and `first_signature?`.
+An error the handler raises is reported through `Rails.error` and never reaches
+the person, whose acceptance stays saved. A slow handler slows the accept and
+signing pages, so queue long work from inside it.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:
