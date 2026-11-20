@@ -1,6 +1,7 @@
 AgreementEngine::Engine.routes.draw do
   resources :agreements, only: [:show, :update, :destroy]
   resource :consent, only: [:show, :create, :destroy]
+  resources :signatures, only: [:show, :update], param: :document_type
 
   get "terms", to: "documents#terms", as: :terms
   get "privacy", to: "documents#privacy", as: :privacy

@@ -19,3 +19,8 @@ en:
         given: "Your consent to electronic records is recorded."
       destroy:
         withdrawn: "Your consent to electronic records is withdrawn."
+    signatures:
+      show:
+        statement: "By typing your full name and selecting Sign, you sign the %{document} above electronically, and your electronic signature has the same effect as a handwritten one."
+        typed_name: "Your full name"
+        sign: "Sign"

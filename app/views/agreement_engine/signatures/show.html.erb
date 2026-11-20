@@ -1,0 +1,24 @@
+<div class="max-w-4xl mx-auto p-4 my-8 lg:my-24">
+  <h1 class="mb-4"><%= @type.title %></h1>
+
+  <article class="prose prose-gray dark:prose-invert max-w-none">
+    <%= drawn_document(@version.frozen_copy["document"], values: @version.frozen_copy["values"]) %>
+  </article>
+
+  <%= form_with(scope: :signature, url: agreement_engine.signature_path(@type.key), method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>
+    <% if @error %>
+      <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
+    <% end %>
+
+    <p><%= t(".statement", document: @type.title) %></p>
+
+    <div>
+      <%= form.label :typed_name, t(".typed_name"), class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :typed_name, autocomplete: "name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+    </div>
+
+    <div>
+      <%= form.submit t(".sign"), class: "btn btn-primary btn-large" %>
+    </div>
+  <% end %>
+</div>
