@@ -75,4 +75,19 @@ class AgreementEngine::UpgradeTest < ActiveSupport::TestCase
   ensure
     AgreementEngine.config.evidence_method = nil
   end
+
+  test "a user whose stored version is the current one is not asked to accept again" do
+    AgreementEngine::Upgrade.run(signer_class: User)
+
+    assert @user.accepted_current?(:terms_of_service)
+  end
+
+  test "running the upgrade a second time creates no new records" do
+    AgreementEngine::Upgrade.run(signer_class: User)
+    counts = [KeystoneUi::Pages::Page.count, KeystoneUi::Pages::Version.count, AgreementEngine::Acceptance.count]
+
+    AgreementEngine::Upgrade.run(signer_class: User)
+
+    assert_equal counts, [KeystoneUi::Pages::Page.count, KeystoneUi::Pages::Version.count, AgreementEngine::Acceptance.count]
+  end
 end

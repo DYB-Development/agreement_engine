@@ -24,6 +24,7 @@ module AgreementEngine
         signer_class.where.not(agreement.version_column => nil).find_each do |signer|
           document = Document.find_by(id: signer.public_send(agreement.version_column))
           next unless document
+          next if Acceptance.exists?(signer: signer, document: document, carried_over: true)
 
           reported_time = time_column && signer.public_send(time_column)
           evidence = evidence_at_upgrade(signer)
