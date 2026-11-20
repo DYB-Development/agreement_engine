@@ -195,6 +195,23 @@ return address is followed only when it is a path on the host's own site that
 the return check allows. Record documents never trigger the accept redirect and
 never appear on the public pages.
 
+## Documents that cover a period
+
+A version can cover a period, given when it is issued as a start and end date
+or as an ISO 8601 duration counted from acceptance. An admin sets it on the
+issue form, and host code passes it to `issue_for!`:
+
+```ruby
+AgreementEngine.issue_for!(:service_agreement, contract, period: {"duration" => "P1Y"})
+AgreementEngine.in_force(person: user, on: Date.current)
+AgreementEngine.in_force(account_id: account.id, on: Date.current)
+AgreementEngine.in_force(record: contract, on: Date.current)
+```
+
+The period is part of the hash. The accept page, the signing page and the
+signer's copy show it. Each acceptance records the dates that apply to it, and
+an agreement with no period is in force from its acceptance onward.
+
 ## The signer's copy
 
 A person can download a copy of any of their own acceptances:

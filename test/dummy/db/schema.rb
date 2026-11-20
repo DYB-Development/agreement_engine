@@ -63,6 +63,8 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.boolean :carried_over, null: false, default: false
     t.boolean :time_reported_by_host, null: false, default: false
     t.datetime :snapshot_taken_at
+    t.date :period_starts_on
+    t.date :period_ends_on
 
     t.timestamps
   end

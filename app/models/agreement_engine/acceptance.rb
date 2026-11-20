@@ -6,6 +6,7 @@ module AgreementEngine
 
     belongs_to :signer, polymorphic: true
 
+    before_create :set_period
     after_create_commit :tell_host
     after_create_commit :email_copy
 
@@ -35,6 +36,29 @@ module AgreementEngine
         button_text: button_text,
         **signature
       )
+    end
+
+    def in_force_on?(day)
+      return false if accepted_at && accepted_at.to_date > day
+      return false if period_starts_on && period_starts_on > day
+      return false if period_ends_on && period_ends_on < day
+
+      true
+    end
+
+    def set_period
+      period = document.frozen_copy.to_h["period"]
+      return if period.blank?
+
+      if period["duration"]
+        return unless accepted_at
+
+        self.period_starts_on = accepted_at.to_date
+        self.period_ends_on = period_starts_on + ActiveSupport::Duration.parse(period["duration"])
+      else
+        self.period_starts_on = period["starts_on"]&.to_date
+        self.period_ends_on = period["ends_on"]&.to_date
+      end
     end
 
     def email_copy

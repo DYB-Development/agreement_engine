@@ -126,6 +126,22 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     AgreementEngine.config.electronic_consent = false
   end
 
+  test "an admin gives a standing version a start and end date when issuing it" do
+    sign_in(@admin)
+
+    post agreement_engine.admin_issues_path, params: {issue: {document_type: "terms_of_service", page_version_id: @page.live_version.id, version: "2.0", effective_at: 1.day.ago, period_starts_on: "2027-01-01", period_ends_on: "2027-12-31"}}
+
+    assert_equal({"starts_on" => "2027-01-01", "ends_on" => "2027-12-31"}, AgreementEngine::Document.current(:terms_of_service).frozen_copy["period"])
+  end
+
+  test "an admin gives a standing version a duration when issuing it" do
+    sign_in(@admin)
+
+    post agreement_engine.admin_issues_path, params: {issue: {document_type: "terms_of_service", page_version_id: @page.live_version.id, version: "2.0", effective_at: 1.day.ago, period_duration: "P1Y"}}
+
+    assert_equal({"duration" => "P1Y"}, AgreementEngine::Document.current(:terms_of_service).frozen_copy["period"])
+  end
+
   private
 
   def document_with_heading(text)
