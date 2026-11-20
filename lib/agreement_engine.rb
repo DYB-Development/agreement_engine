@@ -15,6 +15,7 @@ require_relative "agreement_engine/receipt"
 require_relative "agreement_engine/html_to_page"
 require_relative "agreement_engine/upgrade"
 require_relative "agreement_engine/integrity"
+require_relative "agreement_engine/database_guards"
 
 module AgreementEngine
   class << self
