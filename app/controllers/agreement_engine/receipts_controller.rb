@@ -6,6 +6,10 @@ module AgreementEngine
     before_action :require_signed_in
     before_action :set_acceptance
 
+    def show
+      send_data AgreementEngine::Receipt.pdf(@acceptance), filename: "#{file_name}.pdf", type: "application/pdf", disposition: "attachment"
+    end
+
     def byte_form
       send_data AgreementEngine::Receipt.byte_form(@acceptance), filename: "#{file_name}.json", type: "application/json"
     end

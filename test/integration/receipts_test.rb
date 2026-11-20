@@ -26,4 +26,10 @@ class ReceiptsTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "a person downloads a PDF of the version they accepted" do
+    get agreement_engine.receipt_path(@acceptance, format: :pdf)
+
+    assert_equal ["application/pdf", "%PDF"], [response.media_type, response.body[0, 4]]
+  end
 end
