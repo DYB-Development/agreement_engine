@@ -26,6 +26,7 @@ en:
         sign: "Sign"
       update:
         blank: "Type your full name to sign."
+        stale: "This document changed while you were reading it. Read the current version below and sign again."
         signed: "You signed the %{document}."
     record_documents:
       show:

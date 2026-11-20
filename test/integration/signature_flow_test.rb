@@ -47,7 +47,7 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
   test "signing without a typed name is refused with a message" do
     give_consent
 
-    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: " "}}
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: " ", content_hash: @sow.content_hash}}
 
     assert_select "div", text: "Type your full name to sign."
   end
@@ -55,7 +55,7 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
   test "a signature records the typed name, the consent it relied on and the document hash" do
     give_consent
 
-    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee"}}
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: @sow.content_hash}}
 
     signature = AgreementEngine::Acceptance.where(document: @sow).last
     assert_equal ["signature", "Pat Lee", @consent.id, @sow.content_hash], [signature.strength, signature.typed_name, signature.consent_id, signature.content_hash]
@@ -64,7 +64,7 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
   test "a signature records the signing statement and button text shown" do
     give_consent
 
-    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee"}}
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: @sow.content_hash}}
 
     assert_equal "Sign", AgreementEngine::Acceptance.where(document: @sow).last.button_text
   end
@@ -86,5 +86,16 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
     get agreement_engine.signature_path(:statement_of_work)
 
     assert_select "p", text: "Period: 1 January 2027 to 30 June 2027"
+  end
+
+  test "a signature submitted for a version that is no longer current is refused and the current one is shown" do
+    give_consent
+    page = KeystoneUi::Pages::Page.create!(name: "SOW 3", slug: "sow-3", document: KeystoneUi::Pages::Document.blank)
+    page.publish
+    AgreementEngine::Document.issue!(type: :statement_of_work, page_version: page.live_version, version: "3.0", effective_at: 1.minute.ago)
+
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: @sow.content_hash}}
+
+    assert_equal [0, true], [AgreementEngine::Acceptance.where(strength: "signature").count, response.body.include?("This document changed while you were reading it.")]
   end
 end

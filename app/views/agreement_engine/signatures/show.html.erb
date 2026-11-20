@@ -9,6 +9,8 @@
   </article>
 
   <%= form_with(scope: :signature, url: form_url, method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>
+    <%= form.hidden_field :content_hash, value: @version.content_hash %>
+
     <% if @error %>
       <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
     <% end %>

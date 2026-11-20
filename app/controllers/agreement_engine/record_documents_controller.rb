@@ -28,6 +28,10 @@ module AgreementEngine
       head :not_found unless @type && AgreementEngine.config.may_sign?(self, signer, @version)
     end
 
+    def current_version
+      AgreementEngine.current_for(@type.key, @version.subject)
+    end
+
     def form_url
       agreement_engine.record_document_path(@version, return_to: return_path)
     end

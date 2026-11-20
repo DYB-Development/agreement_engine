@@ -13,7 +13,11 @@ module AgreementEngine
     end
 
     def update
-      if typed_name.blank?
+      if stale?
+        @error = t("agreement_engine.signatures.update.stale")
+        @version = current_version
+        render :show, status: :conflict
+      elsif typed_name.blank?
         @error = t("agreement_engine.signatures.update.blank")
         render :show, status: :unprocessable_entity
       else
@@ -31,6 +35,14 @@ module AgreementEngine
     end
 
     private
+
+    def stale?
+      params.dig(:signature, :content_hash).to_s != @version.content_hash.to_s || current_version != @version
+    end
+
+    def current_version
+      AgreementEngine::Document.current(@type.key)
+    end
 
     def typed_name
       params.dig(:signature, :typed_name).to_s.strip

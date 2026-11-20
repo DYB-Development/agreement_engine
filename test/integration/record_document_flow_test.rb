@@ -44,19 +44,19 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
   test "a person the host refuses cannot sign a record's document" do
     sign_in User.create!(name: "Someone Else", email: "else@example.com")
 
-    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Someone Else"}}
+    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Someone Else", content_hash: @plan_document.content_hash}}
 
     assert_equal 0, @plan_document.acceptances.count
   end
 
   test "after signing, the person is sent to the page on the host's site the link named" do
-    patch agreement_engine.record_document_path(@plan_document, return_to: "/plans/abc"), params: {signature: {typed_name: "Acme Co"}}
+    patch agreement_engine.record_document_path(@plan_document, return_to: "/plans/abc"), params: {signature: {typed_name: "Acme Co", content_hash: @plan_document.content_hash}}
 
     assert_redirected_to "/plans/abc"
   end
 
   test "a return address on another site is ignored" do
-    patch agreement_engine.record_document_path(@plan_document, return_to: "https://evil.example/steal"), params: {signature: {typed_name: "Acme Co"}}
+    patch agreement_engine.record_document_path(@plan_document, return_to: "https://evil.example/steal"), params: {signature: {typed_name: "Acme Co", content_hash: @plan_document.content_hash}}
 
     assert_redirected_to "/"
   end
@@ -64,7 +64,7 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
   test "a return address the host's check refuses is ignored" do
     AgreementEngine.config.return_check_method = ->(path) { path.start_with?("/plans/") }
 
-    patch agreement_engine.record_document_path(@plan_document, return_to: "/admin/secret"), params: {signature: {typed_name: "Acme Co"}}
+    patch agreement_engine.record_document_path(@plan_document, return_to: "/admin/secret"), params: {signature: {typed_name: "Acme Co", content_hash: @plan_document.content_hash}}
 
     assert_redirected_to "/"
   ensure
@@ -80,13 +80,13 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "host code asks who has signed a record's current document" do
-    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co"}}
+    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co", content_hash: @plan_document.content_hash}}
 
     assert_equal [@client], AgreementEngine.signers_for(:plan_sign_off, @client)
   end
 
   test "a record's current document has no signers once a revised one is issued" do
-    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co"}}
+    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co", content_hash: @plan_document.content_hash}}
     AgreementEngine.issue_for!(:plan_sign_off, @client)
 
     assert_empty AgreementEngine.signers_for(:plan_sign_off, @client)
