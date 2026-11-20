@@ -47,7 +47,7 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.references :document, null: false
     t.string :content_hash
     t.integer :byte_form_version
-    t.datetime :accepted_at, null: false
+    t.datetime :accepted_at
     t.string :ip_address
     t.text :user_agent
     t.text :statement
@@ -60,6 +60,9 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.string :strength, null: false, default: "click_accept"
     t.string :typed_name
     t.references :consent
+    t.boolean :carried_over, null: false, default: false
+    t.boolean :time_reported_by_host, null: false, default: false
+    t.datetime :snapshot_taken_at
 
     t.timestamps
   end

@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Acceptance records that keep the evidence of each acceptance and cannot be changed or deleted
 - An evidence hook through which a host supplies the account, further person details and how the session signed in
 - `accepted_current?` and `accepted_versions` on the signer
+- An upgrade task that moves Action Text documents into page versions and carries over each user's stored acceptance
 - The signer's copy: a PDF with an evidence summary, the byte-form file, and an email for chosen types
 - A PDF drawing for the List element
 - A host handler told about each acceptance and signature once committed, including the first signature on a record's document

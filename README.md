@@ -236,6 +236,41 @@ An error the handler raises is reported through `Rails.error` and never reaches
 the person, whose acceptance stays saved. A slow handler slows the accept and
 signing pages, so queue long work from inside it.
 
+## Upgrading an app that already uses agreement_engine
+
+An app on 0.1 keeps its documents as Action Text and each user's accepted
+version in columns on the user table. The upgrade keeps both and moves them
+into the new records.
+
+1. Move to `keystone_ui` 0.49 or later and install `keystone_ui-pages`, with its
+   migrations, Active Storage and a Propshaft stylesheet built with the
+   keystone_ui tokens.
+2. Install this gem's migrations with
+   `rails agreement_engine:install:migrations` and run them. They add tables and
+   fields and change no existing document, Action Text or user rows.
+3. Run `rails "agreement_engine:upgrade[User,terms_accepted_at]"`. The first
+   argument is the model that includes `AgreementEngine::Signable`. The second,
+   optional, names a column holding when each user accepted. Without it, the
+   carried-over acceptances record no time.
+4. Read the task's output. It names each version holding content it could not
+   carry over, such as tables or images, so those pages can be fixed in the
+   builder.
+
+The task makes one page per document type and one published page version per
+dated version, holding its headings, paragraphs with links, bold and italic
+text, and lists. Each version is then issued in place with its original label
+and effective date, frozen and hashed. Each user's stored version becomes one
+acceptance marked as carried over, with the person and account as they are at
+upgrade time, so nobody is asked to accept again. Running it twice creates
+nothing new.
+
+The `config.agreements` list keeps working for now. The old version columns
+stay on the user table until the app's own migration removes them.
+
+What the app gains: editing documents in the page builder, a hash on every
+issued version, a kept record of every acceptance with its evidence, consent to
+electronic records, signatures, documents for one record and the signer's copy.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:

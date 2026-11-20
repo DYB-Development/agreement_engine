@@ -10,6 +10,8 @@ require_relative "agreement_engine/byte_form"
 require_relative "agreement_engine/consent"
 require_relative "agreement_engine/acceptance_event"
 require_relative "agreement_engine/receipt"
+require_relative "agreement_engine/html_to_page"
+require_relative "agreement_engine/upgrade"
 
 module AgreementEngine
   class << self

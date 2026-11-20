@@ -41,6 +41,16 @@ module AgreementEngine
       )
     end
 
+    def issue_in_place!(page_version)
+      copy = {"slug" => page_version.page.slug, "number" => page_version.number, "document" => page_version.document, "values" => {}}
+      update!(
+        page_version: page_version,
+        frozen_copy: copy,
+        byte_form_version: ByteForm::VERSION,
+        content_hash: ByteForm.digest(slug: copy["slug"], number: copy["number"], document: copy["document"])
+      )
+    end
+
     def self.current(document_type)
       where(document_type: document_type, subject_id: nil)
         .published
