@@ -8,6 +8,7 @@ require_relative "agreement_engine/agreement"
 require_relative "agreement_engine/document_type"
 require_relative "agreement_engine/byte_form"
 require_relative "agreement_engine/consent"
+require_relative "agreement_engine/acceptance_event"
 
 module AgreementEngine
   class << self
