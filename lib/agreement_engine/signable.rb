@@ -16,8 +16,8 @@ module AgreementEngine
       agreement.not_accepted_by?(self)
     end
 
-    def accept_version!(agreement, version)
-      update!(agreement.version_column => version.id)
+    def accept_version!(_agreement, version)
+      AgreementEngine::Acceptance.create!(signer: self, person: AgreementEngine::Acceptance.person_snapshot(self), document: version, content_hash: version.content_hash, byte_form_version: version.byte_form_version, accepted_at: Time.current)
     end
   end
 end

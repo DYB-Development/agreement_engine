@@ -18,10 +18,8 @@ class AgreementFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "user with accepted versions can access protected pages" do
-    @user.update!(
-      accepted_terms_of_service_version: @terms_v1,
-      accepted_privacy_policy_version: @privacy_v1
-    )
+    accept(@terms_v1)
+    accept(@privacy_v1)
     sign_in @user
 
     get root_path
@@ -29,10 +27,7 @@ class AgreementFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "user without accepted terms is redirected to agreement page" do
-    @user.update!(
-      accepted_terms_of_service_version_id: nil,
-      accepted_privacy_policy_version: @privacy_v1
-    )
+    accept(@privacy_v1)
     sign_in @user
 
     get root_path
@@ -40,28 +35,27 @@ class AgreementFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "accepting agreement redirects back" do
-    @user.update!(
-      accepted_terms_of_service_version_id: nil,
-      accepted_privacy_policy_version: @privacy_v1
-    )
+    accept(@privacy_v1)
     sign_in @user
 
     patch agreement_engine.agreement_path(:terms_of_service)
     assert_response :see_other
 
-    @user.reload
-    assert_equal @terms_v1.id, @user.accepted_terms_of_service_version_id
+    assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms_v1)
   end
 
   test "declining agreement signs user out" do
-    @user.update!(
-      accepted_terms_of_service_version_id: nil,
-      accepted_privacy_policy_version: @privacy_v1
-    )
+    accept(@privacy_v1)
     sign_in @user
 
     delete agreement_engine.agreement_path(:terms_of_service)
     assert_response :see_other
     assert_match(/please sign in and accept/i, flash[:alert])
+  end
+
+  private
+
+  def accept(document)
+    AgreementEngine::Acceptance.create!(signer: @user, document: document, accepted_at: Time.current)
   end
 end

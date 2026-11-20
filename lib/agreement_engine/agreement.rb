@@ -9,7 +9,7 @@ module AgreementEngine
     def accepted_by?(user)
       current = current_version
       return true unless current
-      user.public_send(version_column) == current.id
+      AgreementEngine::Acceptance.exists?(signer: user, document: current)
     end
 
     def not_accepted_by?(user)

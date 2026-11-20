@@ -71,6 +71,12 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "accepting writes to no column on the host's user table" do
+    accept_terms
+
+    assert_nil @user.reload.accepted_terms_of_service_version_id
+  end
+
   private
 
   def with_evidence_hook(hook)

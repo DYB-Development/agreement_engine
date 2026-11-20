@@ -33,15 +33,15 @@ class AgreementEngine::SignableTest < ActiveSupport::TestCase
   end
 
   test "needs_acceptance? returns false when user has accepted current version" do
-    @user.update!(accepted_terms_of_service_version: @terms_v1)
+    AgreementEngine::Acceptance.create!(signer: @user, document: @terms_v1, accepted_at: Time.current)
     agreement = AgreementEngine.config.agreements.find { |a| a.id == :terms_of_service }
     assert_not @user.needs_acceptance?(agreement)
   end
 
-  test "accept_version! updates the accepted version" do
+  test "accept_version! records an acceptance of the version" do
     agreement = AgreementEngine.config.agreements.find { |a| a.id == :terms_of_service }
     @user.accept_version!(agreement, @terms_v1)
 
-    assert_equal @terms_v1.id, @user.reload.accepted_terms_of_service_version_id
+    assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms_v1)
   end
 end
