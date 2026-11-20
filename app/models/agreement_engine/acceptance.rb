@@ -10,6 +10,7 @@ module AgreementEngine
     def self.record!(signer:, document:, request:, statement:, button_text:)
       create!(
         signer: signer,
+        person: person_snapshot(signer),
         document: document,
         content_hash: document.content_hash,
         byte_form_version: document.byte_form_version,
@@ -21,6 +22,10 @@ module AgreementEngine
         statement: statement,
         button_text: button_text
       )
+    end
+
+    def self.person_snapshot(signer)
+      {"id" => signer.id, "name" => signer.try(:name), "email" => signer.try(:email)}
     end
   end
 end

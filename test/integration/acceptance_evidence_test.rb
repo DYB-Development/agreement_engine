@@ -39,4 +39,17 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
 
     assert_equal [AgreementEngine::VERSION, KeystoneUi::Pages::VERSION], [acceptance.engine_version, acceptance.pages_version]
   end
+
+  test "accepting records the time of acceptance" do
+    travel_to Time.utc(2026, 11, 20, 15, 30) do
+      assert_equal Time.utc(2026, 11, 20, 15, 30), accept_terms.accepted_at
+    end
+  end
+
+  test "accepting records the person's id, name and email as they were at that moment" do
+    acceptance = accept_terms
+    @user.update!(name: "Pat Renamed", email: "renamed@example.com")
+
+    assert_equal({"id" => @user.id, "name" => "Pat Lee", "email" => "pat@example.com"}, acceptance.reload.person)
+  end
 end
