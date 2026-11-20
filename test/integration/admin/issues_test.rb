@@ -133,6 +133,28 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_equal({"duration" => "P1Y"}, AgreementEngine::Document.current(:terms_of_service).frozen_copy["period"])
   end
 
+  test "the admin page marks an issued version whose frozen copy no longer produces its hash" do
+    sign_in(@admin)
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "2.0", effective_at: 1.day.ago)
+    AgreementEngine::Document.where(id: issued.id).update_all(content_hash: "0" * 64)
+
+    get agreement_engine.admin_document_path(issued)
+
+    assert_select "p", text: "The frozen copy no longer produces this hash."
+  end
+
+  test "the admin page marks an issued version whose page was deleted and still shows its text" do
+    sign_in(@admin)
+    page = KeystoneUi::Pages::Page.create!(name: "Privacy", slug: "privacy", document: document_with_heading("Our privacy promise"))
+    page.publish
+    issued = AgreementEngine::Document.issue!(type: :privacy_policy, page_version: page.live_version, version: "2.0", effective_at: 1.day.ago)
+    page.destroy
+
+    get agreement_engine.admin_document_path(issued)
+
+    assert_select "p", text: "The page version this was issued from has changed or been deleted since. The text below is the frozen copy."
+  end
+
   private
 
   def document_with_heading(text)
