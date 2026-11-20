@@ -12,7 +12,20 @@ module AgreementEngine
     def show
     end
 
+    def update
+      if typed_name.blank?
+        @error = t("agreement_engine.signatures.update.blank")
+        render :show, status: :unprocessable_entity
+      else
+        redirect_to main_app.root_path, status: :see_other
+      end
+    end
+
     private
+
+    def typed_name
+      params.dig(:signature, :typed_name).to_s.strip
+    end
 
     def signer
       AgreementEngine.config.current_user(self)

@@ -43,4 +43,12 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to agreement_engine.signature_path(:statement_of_work)
   end
+
+  test "signing without a typed name is refused with a message" do
+    give_consent
+
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: " "}}
+
+    assert_select "div", text: "Type your full name to sign."
+  end
 end

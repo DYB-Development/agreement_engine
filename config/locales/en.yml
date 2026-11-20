@@ -24,3 +24,5 @@ en:
         statement: "By typing your full name and selecting Sign, you sign the %{document} above electronically, and your electronic signature has the same effect as a handwritten one."
         typed_name: "Your full name"
         sign: "Sign"
+      update:
+        blank: "Type your full name to sign."
