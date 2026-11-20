@@ -54,6 +54,18 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_in_delta 1.day.ago, issued.reload.effective_at, 5.seconds
   end
 
+  test "a type's earlier version still shows its own page after the next version is issued from a different page" do
+    sign_in(@admin)
+    earlier = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "1.0", effective_at: 2.days.ago)
+    other_page = KeystoneUi::Pages::Page.create!(name: "Terms rewrite", slug: "terms-rewrite", document: KeystoneUi::Pages::Document.blank)
+    other_page.publish
+    AgreementEngine::Document.issue!(type: :terms_of_service, page_version: other_page.live_version, version: "2.0", effective_at: 1.day.ago)
+
+    get agreement_engine.admin_document_path(earlier)
+
+    assert_select "dd", text: "terms, version 1"
+  end
+
   private
 
   def document_with_heading(text)

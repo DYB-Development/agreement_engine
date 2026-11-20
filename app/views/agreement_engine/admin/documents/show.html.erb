@@ -18,6 +18,10 @@
     </div>
     <% if @document.content_hash %>
       <div class="col-span-2">
+        <dt class="text-sm font-medium text-gray-500">Issued from page</dt>
+        <dd><%= @document.frozen_copy["slug"] %>, version <%= @document.frozen_copy["number"] %></dd>
+      </div>
+      <div class="col-span-2">
         <dt class="text-sm font-medium text-gray-500">SHA-256</dt>
         <dd class="font-mono break-all"><%= @document.content_hash %></dd>
       </div>
