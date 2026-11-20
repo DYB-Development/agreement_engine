@@ -1,0 +1,15 @@
+{
+  "slug": "plan-sign-off",
+  "number": 3,
+  "document": {
+    "schema_version": 1,
+    "sections": [
+      {"id": "s1", "rows": [{"id": "r1", "columns": [{"id": "c1", "elements": [
+        {"id": "e1", "key": "heading", "fields": {"text": {"value": "client_name", "fallback": "Client"}}},
+        {"id": "e2", "key": "legal_list", "fields": {"style": "numbered", "items": [{"text": "Demo one"}, {"text": "Demo two"}]}}
+      ]}]}]}
+    ]
+  },
+  "values": {"client_name": "Acme Co", "demo_count": 2},
+  "period": null
+}

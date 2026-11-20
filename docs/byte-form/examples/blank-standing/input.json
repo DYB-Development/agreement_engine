@@ -1,0 +1,15 @@
+{
+  "slug": "terms",
+  "number": 1,
+  "document": {
+    "schema_version": 1,
+    "sections": [
+      {"id": "s1", "rows": [{"id": "r1", "columns": [{"id": "c1", "elements": [
+        {"id": "e1", "key": "heading", "fields": {"text": "Terms of Service"}},
+        {"id": "e2", "key": "paragraph", "fields": {"text": {"html": "<p>Be <strong>kind</strong>.</p>"}}}
+      ]}]}]}
+    ]
+  },
+  "values": {},
+  "period": null
+}

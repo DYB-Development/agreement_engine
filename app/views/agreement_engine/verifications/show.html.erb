@@ -1,0 +1,22 @@
+<div class="max-w-2xl mx-auto p-4 my-8 lg:my-24">
+  <h1 class="mb-4"><%= t(".title") %></h1>
+  <p class="mb-6"><%= t(".description") %></p>
+
+  <% unless @matched.nil? %>
+    <p class="mb-6 font-medium"><%= @matched ? t(".matched") : t(".not_matched") %></p>
+  <% end %>
+
+  <%= form_with(scope: :verification, url: agreement_engine.verification_path, multipart: true, class: "space-y-4") do |form| %>
+    <div>
+      <%= form.label :file, t(".file"), class: "block text-sm font-medium text-gray-700" %>
+      <%= form.file_field :file, class: "mt-1 block w-full" %>
+    </div>
+    <div>
+      <%= form.label :hash_value, t(".hash"), class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :hash_value, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm font-mono" %>
+    </div>
+    <div>
+      <%= form.submit t(".check"), class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

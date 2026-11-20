@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/agreement_engine/verification"
+
+file, hash_value = ARGV
+abort "Usage: agreement_engine-verify <byte-form file> <sha-256 hash>" unless file && hash_value
+
+if AgreementEngine::Verification.matches?(File.binread(file), hash_value)
+  puts "The file matches this hash."
+else
+  puts "The file does not match this hash."
+  exit 1
+end

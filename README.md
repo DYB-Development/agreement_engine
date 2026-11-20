@@ -217,6 +217,17 @@ end
 The PDF is drawn by keystone_ui-pages, so the host needs Propshaft and a
 compiled stylesheet holding the keystone_ui tokens.
 
+## Checking a copy
+
+The rule that turns an issued version into the bytes it is hashed from is
+published in `docs/byte-form.md`, with worked examples. Anyone can check a
+byte-form file against a hash at `/verify`, which names no signer, or with the
+command installed with the gem:
+
+```
+agreement_engine-verify copy.json <hash>
+```
+
 ## Being told about acceptances
 
 A host sets one handler, which is called once each acceptance or signature is
@@ -300,6 +311,7 @@ The engine provides:
 - `DELETE /consent` - Withdraw consent
 - `GET /signatures/:document_type` - Signing page for a signature-strength type
 - `PATCH /signatures/:document_type` - Sign it
+- `GET /verify` - Check a byte-form file against a hash
 - `GET /receipts/:id.pdf` - A person's PDF copy of their acceptance
 - `GET /receipts/:id/byte_form` - The byte-form file its hash was taken from
 - `GET /records/:code` - Accept or sign one record's document
