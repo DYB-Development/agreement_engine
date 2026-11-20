@@ -62,6 +62,20 @@ module AgreementEngine
       content_hash.present?
     end
 
+    def hash_intact?
+      return true unless issued?
+
+      copy = frozen_copy
+      ByteForm.digest(slug: copy["slug"], number: copy["number"], document: copy["document"], values: copy["values"] || {}, period: copy["period"]) == content_hash
+    end
+
+    def source_moved?
+      return false unless issued?
+
+      source = KeystoneUi::Pages::Version.find_by(id: page_version_id)
+      source.nil? || source.document != frozen_copy["document"]
+    end
+
     def published?
       effective_at.present? && effective_at <= Time.current
     end

@@ -41,4 +41,20 @@ class AgreementEngine::IssuedDocumentTest < ActiveSupport::TestCase
 
     assert_in_delta 1.day.ago, issued.reload.effective_at, 5.seconds
   end
+
+  test "an issued version whose frozen copy no longer produces its stored hash is not intact" do
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: published_version(slug: "terms", title: "Terms"), version: "2.0", effective_at: 1.day.ago)
+    AgreementEngine::Document.where(id: issued.id).update_all(content_hash: "0" * 64)
+
+    assert_not issued.reload.hash_intact?
+  end
+
+  test "an issued version whose page version was edited or deleted since issue is marked as having moved" do
+    page_version = published_version(slug: "terms", title: "Terms")
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: page_version, version: "2.0", effective_at: 1.day.ago)
+
+    page_version.page.destroy
+
+    assert issued.reload.source_moved?
+  end
 end

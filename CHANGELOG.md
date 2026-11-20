@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Acceptance records that keep the evidence of each acceptance and cannot be changed or deleted
 - An evidence hook through which a host supplies the account, further person details and how the session signed in
 - `accepted_current?` and `accepted_versions` on the signer
+- PostgreSQL triggers that reject changes to acceptances and issued versions, admin marks for broken or moved versions, and `agreement_engine:check_hashes`
 - Periods on documents, recorded on each acceptance, with `AgreementEngine.in_force`
 - A verify page and an `agreement_engine-verify` command, and the published byte-form rule with worked examples
 - An upgrade task that moves Action Text documents into page versions and carries over each user's stored acceptance
