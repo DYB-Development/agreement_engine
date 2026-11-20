@@ -37,17 +37,17 @@ module AgreementEngine
     end
 
     def set_agreement
-      @agreement = AgreementEngine.config.agreements.find { |a| a.id.to_s == params[:id] }
+      @agreement = AgreementEngine.document_type(params[:id])
 
-      if @agreement.nil?
+      if @agreement.nil? || @agreement.per_record?
         redirect_to main_app.root_path
-      elsif @agreement.accepted_by?(agreement_engine_current_user)
+      elsif agreement_engine_current_user.accepted_current?(@agreement.key)
         redirect_to after_accepted_path
       end
     end
 
     def set_version
-      @version = @agreement&.current_version
+      @version = @agreement && AgreementEngine::Document.current(@agreement.key)
     end
 
     def after_accepted_path

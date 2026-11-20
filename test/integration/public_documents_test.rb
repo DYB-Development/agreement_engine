@@ -43,4 +43,16 @@ class PublicDocumentsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match(/No privacy policy has been published yet/, response.body)
   end
+
+  test "every registered standing type has a public page" do
+    registered = AgreementEngine.config.document_types
+    AgreementEngine.config.document_types = registered + [AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept)]
+    AgreementEngine::Document.create!(document_type: "nda", version: "1.0", content: "NDA content", effective_at: 1.day.ago)
+
+    get agreement_engine.public_document_path(:nda)
+
+    assert_select "h1", text: "Mutual NDA"
+  ensure
+    AgreementEngine.config.document_types = registered
+  end
 end

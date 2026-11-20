@@ -2,14 +2,11 @@
 
 module AgreementEngine
   class DocumentsController < ::ApplicationController
-    def terms
-      @agreement = AgreementEngine.config.agreements.find { |a| a.id == :terms_of_service }
-      @version = AgreementEngine::Document.current(:terms_of_service)
-    end
+    def show
+      @type = AgreementEngine.document_type(params[:document_type])
+      return head(:not_found) unless @type&.standing?
 
-    def privacy
-      @agreement = AgreementEngine.config.agreements.find { |a| a.id == :privacy_policy }
-      @version = AgreementEngine::Document.current(:privacy_policy)
+      @version = AgreementEngine::Document.current(@type.key)
     end
   end
 end

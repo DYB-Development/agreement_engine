@@ -10,9 +10,10 @@ AgreementEngine.configure do |config|
   #   controller.redirect_to("/", alert: "Not authorized") unless config.signed_in?(controller)
   # }
 
-  # Define your legal agreements:
-  # config.agreements = [
-  #   AgreementEngine::Agreement.new(:terms, title: "Terms of Service", required: true),
-  #   AgreementEngine::Agreement.new(:privacy, title: "Privacy Policy", required: true),
+  # Register your documents. A standing type that prompts sends signed-in people
+  # to accept its current version:
+  # config.document_types = [
+  #   AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms of Service", kind: :standing, strength: :click_accept, prompts: true),
+  #   AgreementEngine::DocumentType.new(key: :privacy_policy, title: "Privacy Policy", kind: :standing, strength: :click_accept, prompts: true)
   # ]
 end

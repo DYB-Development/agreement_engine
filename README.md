@@ -20,43 +20,24 @@ rails db:migrate
 
 ## Setup
 
-### 1. Configure agreements
+### 1. Register document types
 
 Create `config/initializers/agreement_engine.rb`:
 
 ```ruby
 AgreementEngine.configure do |config|
-  config.agreements = [
-    AgreementEngine::Agreement.new(
-      id: :terms_of_service,
-      title: "Terms Of Service",
-      version_column: :accepted_terms_of_service_version_id,
-      document_type: :terms_of_service,
-      prompt_when_updated: true
-    ),
-    AgreementEngine::Agreement.new(
-      id: :privacy_policy,
-      title: "Privacy Policy",
-      version_column: :accepted_privacy_policy_version_id,
-      document_type: :privacy_policy,
-      prompt_when_updated: true
-    )
-  ]
-end
-```
-
-### Register document types
-
-A host can register document types of its own beside the agreements above.
-Each agreement listed the existing way is also available as a registered type.
-
-```ruby
-AgreementEngine.configure do |config|
   config.document_types = [
-    AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept)
+    AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms of Service", kind: :standing, strength: :click_accept, prompts: true),
+    AgreementEngine::DocumentType.new(key: :privacy_policy, title: "Privacy Policy", kind: :standing, strength: :click_accept, prompts: true)
   ]
 end
 ```
+
+This list is the one place documents are declared. The sign-in redirect, the
+public pages, the admin pages and the seed task all read it. A standing type
+that prompts sends signed-in people to accept its current version. Every
+standing type has a public page at `/documents/<key>`, and `/terms` and
+`/privacy` still serve the terms of service and privacy policy.
 
 ### Write and issue documents with keystone_ui-pages
 
@@ -96,6 +77,9 @@ mount AgreementEngine::Engine, at: "/"
 ```bash
 rails agreement_engine:seed
 ```
+
+The seed task issues a starting version for every registered standing type
+that has none, from a page you then edit in the builder.
 
 ## Acceptance evidence
 
@@ -292,8 +276,27 @@ acceptance marked as carried over, with the person and account as they are at
 upgrade time, so nobody is asked to accept again. Running it twice creates
 nothing new.
 
-The `config.agreements` list keeps working for now. The old version columns
-stay on the user table until the app's own migration removes them.
+5. Replace `config.agreements` with `config.document_types`, as in Setup
+   above. From 0.2 an app that still sets `config.agreements` fails at boot
+   with a message naming the replacement. The upgrade task finds each user's
+   stored version by the column the 0.1 install created for each type,
+   `accepted_<key>_version_id`.
+6. Once the task has run and you have checked its result, remove the old
+   columns with a migration of your own:
+
+   ```ruby
+   class RemoveAgreementEngineVersionColumnsFromUsers < ActiveRecord::Migration[8.0]
+     def change
+       remove_foreign_key :users, :agreement_engine_documents, column: :accepted_terms_of_service_version_id
+       remove_foreign_key :users, :agreement_engine_documents, column: :accepted_privacy_policy_version_id
+       remove_column :users, :accepted_terms_of_service_version_id, :bigint
+       remove_column :users, :accepted_privacy_policy_version_id, :bigint
+     end
+   end
+   ```
+
+   Generate it with `bin/rails generate migration RemoveAgreementEngineVersionColumnsFromUsers`
+   and fill in its body.
 
 What the app gains: editing documents in the page builder, a hash on every
 issued version, a kept record of every acceptance with its evidence, consent to
@@ -321,7 +324,8 @@ The engine provides:
 - `DELETE /agreements/:id` - Decline agreement (signs user out)
 - `GET /terms` - Public terms of service page
 - `GET /privacy` - Public privacy policy page
-- `GET /admin/documents` - Admin CRUD for managing document versions
+- `GET /documents/:document_type` - Public page for any registered standing type
+- `GET /admin/documents` - List, view and delete document versions
 - `GET /admin/issues/new` - Issue a published page version as a document version
 - `GET /consent` - Read the consent to electronic records
 - `POST /consent` - Give consent

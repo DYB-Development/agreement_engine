@@ -46,3 +46,9 @@ en:
         check: "Check"
         matched: "The file matches this hash."
         not_matched: "The file does not match this hash."
+    documents:
+      show:
+        none:
+          default: "Nothing has been published here yet."
+          terms_of_service: "No terms of service have been published yet."
+          privacy_policy: "No privacy policy has been published yet."

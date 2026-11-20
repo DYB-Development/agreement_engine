@@ -1,16 +1,20 @@
-<% content_for :title, "Privacy Policy" %>
+<% content_for :title, @type.title %>
 
 <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
   <article class="prose prose-gray dark:prose-invert max-w-none">
-    <h1>Privacy Policy</h1>
+    <h1><%= @type.title %></h1>
 
     <% if @version %>
       <p class="text-sm text-gray-500 dark:text-gray-400">
         Version <%= @version.version %> - Effective <%= @version.effective_at.strftime("%B %d, %Y") %>
       </p>
-      <%= @version.content %>
+      <% if @version.issued? %>
+        <%= drawn_document(@version.frozen_copy["document"], values: @version.frozen_copy["values"]) %>
+      <% else %>
+        <%= @version.content %>
+      <% end %>
     <% else %>
-      <p class="text-gray-500">No privacy policy has been published yet.</p>
+      <p class="text-gray-500"><%= t(".none.#{@type.key}", default: t(".none.default")) %></p>
     <% end %>
   </article>
 </div>

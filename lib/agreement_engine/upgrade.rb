@@ -20,9 +20,12 @@ module AgreementEngine
     end
 
     def carry_over_acceptances(signer_class, time_column)
-      AgreementEngine.config.agreements.each do |agreement|
-        signer_class.where.not(agreement.version_column => nil).find_each do |signer|
-          document = Document.find_by(id: signer.public_send(agreement.version_column))
+      AgreementEngine.config.registered_document_types.select(&:standing?).each do |type|
+        column = "accepted_#{type.key}_version_id"
+        next unless signer_class.column_names.include?(column)
+
+        signer_class.where.not(column => nil).find_each do |signer|
+          document = Document.find_by(id: signer.public_send(column))
           next unless document
           next if Acceptance.exists?(signer: signer, document: document, carried_over: true)
 

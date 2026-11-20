@@ -6,12 +6,6 @@ module AgreementEngine
 
     included do
       has_many :agreement_engine_acceptances, -> { order(:accepted_at, :id) }, as: :signer, class_name: "AgreementEngine::Acceptance"
-
-      AgreementEngine.config.agreements.each do |agreement|
-        belongs_to :"accepted_#{agreement.document_type}_version",
-          class_name: "AgreementEngine::Document",
-          optional: true
-      end
     end
 
     def accepted_versions(document_type)
@@ -34,11 +28,11 @@ module AgreementEngine
       agreement_engine_acceptances.where(document: current).where.missing(:consent_withdrawal).last
     end
 
-    def needs_acceptance?(agreement)
-      agreement.not_accepted_by?(self)
+    def needs_acceptance?(document_type)
+      !accepted_current?(document_type)
     end
 
-    def accept_version!(_agreement, version)
+    def accept_version!(version)
       AgreementEngine::Acceptance.create!(signer: self, person: AgreementEngine::Acceptance.person_snapshot(self), document: version, content_hash: version.content_hash, byte_form_version: version.byte_form_version, accepted_at: Time.current)
     end
   end

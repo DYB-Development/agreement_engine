@@ -16,9 +16,10 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
     assert_equal nda, AgreementEngine.document_type(:nda)
   end
 
-  test "each agreement a host lists the existing way is a registered standing click-accept type" do
-    assert_equal AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept),
-      AgreementEngine.document_type(:terms_of_service)
+  test "a host that still sets the old agreement list gets an error naming its replacement" do
+    error = assert_raises(ArgumentError) { AgreementEngine.config.agreements = [] }
+
+    assert_includes error.message, "config.document_types"
   end
 
   test "a host marks a document type as needing a signature by setting its strength" do

@@ -8,11 +8,12 @@ AgreementEngine::Engine.routes.draw do
     get :byte_form, on: :member
   end
 
-  get "terms", to: "documents#terms", as: :terms
-  get "privacy", to: "documents#privacy", as: :privacy
+  get "terms", to: "documents#show", defaults: {document_type: "terms_of_service"}, as: :terms
+  get "privacy", to: "documents#show", defaults: {document_type: "privacy_policy"}, as: :privacy
+  get "documents/:document_type", to: "documents#show", as: :public_document
 
   namespace :admin do
-    resources :documents
+    resources :documents, only: [:index, :show, :destroy]
     resources :issues, only: [:new, :create]
   end
 end
