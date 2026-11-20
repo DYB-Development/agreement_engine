@@ -41,45 +41,6 @@ class AgreementEngine::Admin::DocumentsTest < ActionDispatch::IntegrationTest
     assert_match version.version, response.body
   end
 
-  test "can create new document" do
-    sign_in(@admin)
-    get agreement_engine.new_admin_document_path
-    assert_response :success
-
-    assert_difference "AgreementEngine::Document.count" do
-      post agreement_engine.admin_documents_path, params: {
-        document: {
-          document_type: "terms_of_service",
-          version: "2.0",
-          content: "New terms content",
-          summary: "Updated liability section"
-        }
-      }
-    end
-
-    assert_redirected_to agreement_engine.admin_document_path(AgreementEngine::Document.last)
-  end
-
-  test "can publish a draft by setting effective_at" do
-    sign_in(@admin)
-    version = AgreementEngine::Document.create!(
-      document_type: "privacy_policy",
-      version: "1.0",
-      content: "Draft content",
-      effective_at: nil
-    )
-
-    patch agreement_engine.admin_document_path(version), params: {
-      document: {
-        effective_at: Time.current
-      }
-    }
-
-    assert_redirected_to agreement_engine.admin_document_path(version)
-    version.reload
-    assert version.effective_at.present?
-  end
-
   test "can delete a document" do
     sign_in(@admin)
     version = AgreementEngine::Document.create!(

@@ -13,7 +13,7 @@ AgreementEngine::Engine.routes.draw do
   get "documents/:document_type", to: "documents#show", as: :public_document
 
   namespace :admin do
-    resources :documents
+    resources :documents, only: [:index, :show, :destroy]
     resources :issues, only: [:new, :create]
   end
 end

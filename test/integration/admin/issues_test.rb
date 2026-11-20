@@ -45,15 +45,6 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_equal "Issued versions are frozen and cannot be changed or deleted.", flash[:alert]
   end
 
-  test "editing an issued version is refused and leaves it unchanged" do
-    sign_in(@admin)
-    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "2.0", effective_at: 1.day.ago)
-
-    patch agreement_engine.admin_document_path(issued), params: {document: {effective_at: 1.year.from_now}}
-
-    assert_in_delta 1.day.ago, issued.reload.effective_at, 5.seconds
-  end
-
   test "a type's earlier version still shows its own page after the next version is issued from a different page" do
     sign_in(@admin)
     earlier = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "1.0", effective_at: 2.days.ago)

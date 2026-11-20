@@ -33,4 +33,12 @@ class AgreementEngine::IssuedDocumentTest < ActiveSupport::TestCase
 
     assert_equal 1, AgreementEngine::Document.current(:terms_of_service).frozen_copy["number"]
   end
+
+  test "changing an issued version is refused and leaves it unchanged" do
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: published_version(slug: "terms", title: "Terms"), version: "2.0", effective_at: 1.day.ago)
+
+    issued.update(effective_at: 1.year.from_now)
+
+    assert_in_delta 1.day.ago, issued.reload.effective_at, 5.seconds
+  end
 end
