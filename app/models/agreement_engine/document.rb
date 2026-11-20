@@ -16,6 +16,7 @@ module AgreementEngine
     FROZEN = "Issued versions are frozen and cannot be changed or deleted."
 
     before_destroy :refuse_when_issued
+    validate :unchanged_once_issued, on: :update
 
     belongs_to :page_version, class_name: "KeystoneUi::Pages::Version", optional: true
 
@@ -48,6 +49,10 @@ module AgreementEngine
     end
 
     private
+
+    def unchanged_once_issued
+      errors.add(:base, FROZEN) if content_hash_was.present? && changed?
+    end
 
     def refuse_when_issued
       return unless issued?
