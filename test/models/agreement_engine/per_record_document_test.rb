@@ -22,4 +22,29 @@ class AgreementEngine::PerRecordDocumentTest < ActiveSupport::TestCase
 
     assert_equal [@record, @template.live_version, {"client_name" => "Acme Co"}], [issued.subject, issued.page_version, issued.frozen_copy["values"]]
   end
+
+  test "changing the record afterwards changes neither the issued document's values nor its hash" do
+    issued = AgreementEngine.issue_for!(:plan_sign_off, @record)
+    hash_at_issue = issued.content_hash
+
+    @record.update!(name: "Acme Renamed")
+
+    assert_equal [{"client_name" => "Acme Co"}, hash_at_issue], issued.reload.then { |document| [document.frozen_copy["values"], document.content_hash] }
+  end
+
+  test "issuing a revised document for the same record keeps the earlier one and its acceptances" do
+    first = AgreementEngine.issue_for!(:plan_sign_off, @record)
+    acceptance = AgreementEngine::Acceptance.create!(signer: @record, document: first, accepted_at: Time.current)
+
+    AgreementEngine.issue_for!(:plan_sign_off, @record)
+
+    assert_equal [first, acceptance], [AgreementEngine::Document.find(first.id), first.acceptances.first]
+  end
+
+  test "host code finds a record's current document, the latest issued for it" do
+    AgreementEngine.issue_for!(:plan_sign_off, @record)
+    revised = AgreementEngine.issue_for!(:plan_sign_off, @record)
+
+    assert_equal revised, AgreementEngine.current_for(:plan_sign_off, @record)
+  end
 end

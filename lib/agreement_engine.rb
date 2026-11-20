@@ -27,6 +27,10 @@ module AgreementEngine
       Document.issue!(type: type.key, page_version: page_version, version: label, effective_at: Time.current, subject: record, values: values)
     end
 
+    def current_for(type_key, record)
+      Document.where(document_type: type_key.to_s, subject: record).order(:created_at, :id).last
+    end
+
     def document_type(key)
       config.registered_document_types.find { |type| type.key == key.to_sym }
     end
