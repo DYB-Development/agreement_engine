@@ -13,6 +13,10 @@ module AgreementEngine
     scope :published, -> { where("effective_at <= ?", Time.current) }
     scope :draft, -> { where(effective_at: nil) }
 
+    FROZEN = "Issued versions are frozen and cannot be changed or deleted."
+
+    before_destroy :refuse_when_issued
+
     belongs_to :page_version, class_name: "KeystoneUi::Pages::Version", optional: true
 
     def self.issue!(type:, page_version:, version:, effective_at:)
@@ -35,8 +39,21 @@ module AgreementEngine
         .first
     end
 
+    def issued?
+      content_hash.present?
+    end
+
     def published?
       effective_at.present? && effective_at <= Time.current
+    end
+
+    private
+
+    def refuse_when_issued
+      return unless issued?
+
+      errors.add(:base, FROZEN)
+      throw :abort
     end
   end
 end

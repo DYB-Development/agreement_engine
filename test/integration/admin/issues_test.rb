@@ -36,6 +36,15 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_includes response.body, issued.content_hash
   end
 
+  test "deleting an issued version is refused with a message saying it is frozen" do
+    sign_in(@admin)
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "2.0", effective_at: 1.day.ago)
+
+    delete agreement_engine.admin_document_path(issued)
+
+    assert_equal "Issued versions are frozen and cannot be changed or deleted.", flash[:alert]
+  end
+
   private
 
   def document_with_heading(text)
