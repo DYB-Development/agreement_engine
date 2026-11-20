@@ -22,7 +22,7 @@ module AgreementEngine
     end
 
     def carry_over_version(page, version)
-      page.edit(KeystoneUi::Pages::Document.blank)
+      page.edit(HtmlToPage.convert(version.content.body.to_html).document)
       page.publish
     end
   end
