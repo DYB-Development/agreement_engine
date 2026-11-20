@@ -10,11 +10,5 @@ module AgreementEngine
       AgreementEngine::PagesElements.register(KeystoneUi::Pages.catalog)
       ActiveSupport.on_load(:action_view) { include AgreementEngine::PagesElements::Drawing }
     end
-
-    initializer "agreement_engine.url_helpers" do
-      ActiveSupport.on_load(:action_controller) do
-        helper Rails.application.routes.url_helpers
-      end
-    end
   end
 end

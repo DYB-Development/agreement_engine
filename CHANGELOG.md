@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-11-20
+
+### Fixed
+
+- Installing the engine no longer adds the host app's route helpers to every controller, which made other engines' links point at the host app's routes
+
 ## [0.2.0] - 2026-11-20
 
 ### Added
