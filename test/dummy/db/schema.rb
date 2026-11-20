@@ -1,9 +1,37 @@
 ActiveRecord::Schema[8.0].define(version: 1) do
+  create_table :keystone_ui_pages_pages do |t|
+    t.string :name, null: false
+    t.string :slug, null: false
+    t.json :document, null: false
+    t.references :owner, polymorphic: true
+    t.json :undo_history
+    t.json :undone_changes
+    t.string :place
+    t.string :access_exception
+    t.datetime :archived_at
+    t.string :sequence_key
+
+    t.timestamps
+  end
+
+  create_table :keystone_ui_pages_versions do |t|
+    t.references :page, null: false
+    t.integer :number, null: false
+    t.json :document, null: false
+    t.string :status, null: false
+
+    t.timestamps
+  end
+
   create_table :agreement_engine_documents do |t|
     t.string :document_type, null: false
     t.string :version, null: false
     t.datetime :effective_at
     t.text :summary
+    t.references :page_version
+    t.json :frozen_copy
+    t.string :content_hash
+    t.integer :byte_form_version
 
     t.timestamps
   end

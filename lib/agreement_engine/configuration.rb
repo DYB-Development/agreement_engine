@@ -3,6 +3,7 @@
 module AgreementEngine
   class Configuration
     attr_accessor :agreements
+    attr_accessor :document_types
     attr_accessor :current_user_method
     attr_accessor :signed_in_method
     attr_accessor :auth_controller_method
@@ -11,6 +12,7 @@ module AgreementEngine
 
     def initialize
       @agreements = []
+      @document_types = []
 
       @current_user_method = ->(c) { c.current_user }
       @signed_in_method = ->(c) { c.user_signed_in? }
@@ -25,6 +27,10 @@ module AgreementEngine
       @admin_auth_method = ->(c) {
         c.redirect_to("/", alert: "Not authorized") unless signed_in?(c)
       }
+    end
+
+    def registered_document_types
+      document_types + agreements.map(&:to_document_type)
     end
 
     def current_user(controller) = current_user_method.call(controller)

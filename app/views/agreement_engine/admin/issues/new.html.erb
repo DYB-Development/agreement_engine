@@ -1,0 +1,33 @@
+<div class="mx-auto max-w-4xl px-4 py-8">
+  <h1 class="text-2xl font-bold mb-6">Issue a version</h1>
+
+  <%= form_with(scope: :issue, url: agreement_engine.admin_issues_path, class: "space-y-4") do |form| %>
+    <% if @error %>
+      <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
+    <% end %>
+
+    <div>
+      <%= form.label :document_type, "Document type", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :document_type, AgreementEngine.config.registered_document_types.map { |type| [type.title, type.key] }, {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :page_version_id, "Published page", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.select :page_version_id, @page_versions.map { |version| ["#{version.page.name}, version #{version.number}", version.id] }, {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :version, "Version label", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :version, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :effective_at, "Effective date", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.datetime_local_field :effective_at, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+    </div>
+
+    <div>
+      <%= form.submit "Issue", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

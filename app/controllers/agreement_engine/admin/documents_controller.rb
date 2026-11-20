@@ -41,8 +41,11 @@ module AgreementEngine
       end
 
       def destroy
-        @document.destroy
-        redirect_to agreement_engine.admin_documents_path, notice: "Document was successfully deleted.", status: :see_other
+        if @document.destroy
+          redirect_to agreement_engine.admin_documents_path, notice: "Document was successfully deleted.", status: :see_other
+        else
+          redirect_to agreement_engine.admin_document_path(@document), alert: @document.errors.full_messages.to_sentence, status: :see_other
+        end
       end
 
       private

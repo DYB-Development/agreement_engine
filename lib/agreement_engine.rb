@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require_relative "agreement_engine/version"
+require "keystone_ui/pages"
 require_relative "agreement_engine/configuration"
 require_relative "agreement_engine/agreement"
+require_relative "agreement_engine/document_type"
+require_relative "agreement_engine/byte_form"
 
 module AgreementEngine
   class << self
@@ -12,6 +15,10 @@ module AgreementEngine
 
     def configure
       yield config
+    end
+
+    def document_type(key)
+      config.registered_document_types.find { |type| type.key == key.to_sym }
     end
   end
 end

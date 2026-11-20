@@ -16,6 +16,16 @@
       <dt class="text-sm font-medium text-gray-500">Effective Date</dt>
       <dd><%= @document.effective_at&.strftime("%B %d, %Y") || "Not set" %></dd>
     </div>
+    <% if @document.content_hash %>
+      <div class="col-span-2">
+        <dt class="text-sm font-medium text-gray-500">Issued from page</dt>
+        <dd><%= @document.frozen_copy["slug"] %>, version <%= @document.frozen_copy["number"] %></dd>
+      </div>
+      <div class="col-span-2">
+        <dt class="text-sm font-medium text-gray-500">SHA-256</dt>
+        <dd class="font-mono break-all"><%= @document.content_hash %></dd>
+      </div>
+    <% end %>
     <% if @document.summary.present? %>
       <div class="col-span-2">
         <dt class="text-sm font-medium text-gray-500">Summary</dt>
@@ -25,6 +35,10 @@
   </dl>
 
   <article class="prose prose-gray dark:prose-invert max-w-none">
-    <%= @document.content %>
+    <% if @document.content_hash %>
+      <%= drawn_document(@document.frozen_copy["document"], values: @document.frozen_copy["values"]) %>
+    <% else %>
+      <%= @document.content %>
+    <% end %>
   </article>
 </div>
