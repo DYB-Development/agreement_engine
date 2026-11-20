@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Acceptance records that keep the evidence of each acceptance and cannot be changed or deleted
 - An evidence hook through which a host supplies the account, further person details and how the session signed in
 - `accepted_current?` and `accepted_versions` on the signer
+- Periods on documents, recorded on each acceptance, with `AgreementEngine.in_force`
 - A verify page and an `agreement_engine-verify` command, and the published byte-form rule with worked examples
 - An upgrade task that moves Action Text documents into page versions and carries over each user's stored acceptance
 - The signer's copy: a PDF with an evidence summary, the byte-form file, and an email for chosen types
