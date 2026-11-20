@@ -18,6 +18,11 @@ module AgreementEngine
       agreement_engine_acceptances.includes(:document).map(&:document).select { |document| document.document_type == document_type.to_s }
     end
 
+    def accepted_current?(document_type)
+      current = AgreementEngine::Document.current(document_type)
+      current.nil? || agreement_engine_acceptances.exists?(document: current)
+    end
+
     def needs_acceptance?(agreement)
       agreement.not_accepted_by?(self)
     end

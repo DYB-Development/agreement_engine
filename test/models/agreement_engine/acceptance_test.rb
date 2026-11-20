@@ -13,4 +13,10 @@ class AgreementEngine::AcceptanceTest < ActiveSupport::TestCase
 
     assert_equal [@v1, @v2], @user.accepted_versions(:terms_of_service)
   end
+
+  test "host code asks whether a person accepted the current version of a type" do
+    @user.accept_version!(nil, @v1)
+
+    assert_not @user.accepted_current?(:terms_of_service)
+  end
 end
