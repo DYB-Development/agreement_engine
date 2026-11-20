@@ -40,6 +40,15 @@ module AgreementEngine
       current_for(type_key, record)&.acceptances.to_a.map(&:signer).uniq
     end
 
+    def in_force(on:, person: nil, account_id: nil, record: nil)
+      acceptances = Acceptance.includes(:document).order(:accepted_at, :id)
+      acceptances = acceptances.where(signer: person) if person
+      acceptances = acceptances.where(document: Document.where(subject: record)) if record
+      acceptances.select do |acceptance|
+        (account_id.nil? || acceptance.account.to_h["id"].to_s == account_id.to_s) && acceptance.in_force_on?(on)
+      end
+    end
+
     def document_type(key)
       config.registered_document_types.find { |type| type.key == key.to_sym }
     end

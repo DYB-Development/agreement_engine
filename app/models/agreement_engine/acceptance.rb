@@ -38,6 +38,14 @@ module AgreementEngine
       )
     end
 
+    def in_force_on?(day)
+      return false if accepted_at && accepted_at.to_date > day
+      return false if period_starts_on && period_starts_on > day
+      return false if period_ends_on && period_ends_on < day
+
+      true
+    end
+
     def set_period
       period = document.frozen_copy.to_h["period"]
       return if period.blank?
