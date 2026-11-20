@@ -16,7 +16,7 @@ module AgreementEngine
     end
 
     def document_type(key)
-      config.document_types.find { |type| type.key == key.to_sym }
+      config.registered_document_types.find { |type| type.key == key.to_sym }
     end
   end
 end

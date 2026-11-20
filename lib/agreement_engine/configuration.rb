@@ -29,6 +29,10 @@ module AgreementEngine
       }
     end
 
+    def registered_document_types
+      document_types + agreements.map(&:to_document_type)
+    end
+
     def current_user(controller) = current_user_method.call(controller)
     def signed_in?(controller) = signed_in_method.call(controller)
     def auth_controller?(controller) = auth_controller_method.call(controller)

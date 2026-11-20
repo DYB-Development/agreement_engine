@@ -16,6 +16,10 @@ module AgreementEngine
       !accepted_by?(user)
     end
 
+    def to_document_type
+      DocumentType.new(key: document_type.to_sym, title: title, kind: :standing, strength: :click_accept)
+    end
+
     def to_param = id
 
     def to_partial_path = "agreement_engine/agreements/#{id}"
