@@ -29,4 +29,18 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     assert_select "input[name='signature[typed_name]']"
   end
+
+  test "a person without current consent is sent to the consent page first" do
+    get agreement_engine.signature_path(:statement_of_work)
+
+    assert_redirected_to agreement_engine.consent_path
+  end
+
+  test "a person who consents on the way to signing is returned to the signing page" do
+    get agreement_engine.signature_path(:statement_of_work)
+
+    post agreement_engine.consent_path
+
+    assert_redirected_to agreement_engine.signature_path(:statement_of_work)
+  end
 end
