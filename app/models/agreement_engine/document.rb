@@ -18,6 +18,8 @@ module AgreementEngine
     before_destroy :refuse_when_issued
     validate :unchanged_once_issued, on: :update
 
+    has_many :acceptances, -> { order(:accepted_at, :id) }, class_name: "AgreementEngine::Acceptance"
+
     belongs_to :page_version, class_name: "KeystoneUi::Pages::Version", optional: true
 
     def self.issue!(type:, page_version:, version:, effective_at:)
