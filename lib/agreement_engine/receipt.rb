@@ -28,7 +28,7 @@ module AgreementEngine
 
     def byte_form(acceptance)
       copy = acceptance.document.frozen_copy
-      ByteForm.encode(slug: copy["slug"], number: copy["number"], document: copy["document"], values: copy["values"] || {})
+      ByteForm.encode(slug: copy["slug"], number: copy["number"], document: copy["document"], values: copy["values"] || {}, period: copy["period"])
     end
   end
 end

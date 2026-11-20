@@ -27,8 +27,8 @@ module AgreementEngine
 
     def to_param = code
 
-    def self.issue!(type:, page_version:, version:, effective_at:, subject: nil, values: {})
-      frozen_copy = {"slug" => page_version.page.slug, "number" => page_version.number, "document" => page_version.document, "values" => values}
+    def self.issue!(type:, page_version:, version:, effective_at:, subject: nil, values: {}, period: nil)
+      frozen_copy = {"slug" => page_version.page.slug, "number" => page_version.number, "document" => page_version.document, "values" => values, "period" => period.presence}
       create!(
         subject: subject,
         document_type: type.to_s,
@@ -37,7 +37,7 @@ module AgreementEngine
         page_version: page_version,
         frozen_copy: frozen_copy,
         byte_form_version: ByteForm::VERSION,
-        content_hash: ByteForm.digest(slug: frozen_copy["slug"], number: frozen_copy["number"], document: frozen_copy["document"], values: values)
+        content_hash: ByteForm.digest(slug: frozen_copy["slug"], number: frozen_copy["number"], document: frozen_copy["document"], values: values, period: frozen_copy["period"])
       )
     end
 
