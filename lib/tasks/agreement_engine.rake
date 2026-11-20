@@ -18,6 +18,14 @@ namespace :agreement_engine do
       end
     end
 
+    if AgreementEngine.config.electronic_consent
+      if AgreementEngine::Consent.seed!
+        puts "  Issued Consent to Electronic Records v1.0"
+      else
+        puts "  Consent to Electronic Records already exists, skipping"
+      end
+    end
+
     puts "Done!"
   end
 end
