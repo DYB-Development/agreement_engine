@@ -37,3 +37,12 @@ en:
       copy:
         subject: "Your copy of the %{document}"
         body: "Attached are your copy of the %{document} and the byte-form file its SHA-256 hash was taken from. Running any SHA-256 tool on that file prints the hash below."
+    verifications:
+      show:
+        title: "Check a signed copy"
+        description: "Choose the byte-form file from your copy and enter the SHA-256 hash it shows. Nothing you send is stored."
+        file: "Byte-form file"
+        hash: "SHA-256 hash"
+        check: "Check"
+        matched: "The file matches this hash."
+        not_matched: "The file does not match this hash."

@@ -1,6 +1,7 @@
 AgreementEngine::Engine.routes.draw do
   resources :agreements, only: [:show, :update, :destroy]
   resource :consent, only: [:show, :create, :destroy]
+  resource :verification, only: [:show, :create], path: "verify"
   resources :signatures, only: [:show, :update], param: :document_type
   resources :record_documents, only: [:show, :update], param: :code, path: "records"
   resources :receipts, only: [:show] do
