@@ -87,6 +87,15 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_select "option[value='#{@page.live_version.id}']", text: "Terms, version 1"
   end
 
+  test "issuing a version label the type already has shows the form again with the reason" do
+    sign_in(@admin)
+    AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "2.0", effective_at: 1.day.ago)
+
+    post agreement_engine.admin_issues_path, params: {issue: {document_type: "terms_of_service", page_version_id: @page.live_version.id, version: "2.0", effective_at: 1.day.ago}}
+
+    assert_select "div", text: "Version has already been taken"
+  end
+
   private
 
   def document_with_heading(text)

@@ -18,6 +18,10 @@ module AgreementEngine
           effective_at: issue_params[:effective_at]
         )
         redirect_to agreement_engine.admin_document_path(document), notice: "Version #{document.version} was issued."
+      rescue ActiveRecord::RecordInvalid => invalid
+        @error = invalid.record.errors.full_messages.to_sentence
+        @page_versions = published_page_versions
+        render :new, status: :unprocessable_entity
       end
 
       private
