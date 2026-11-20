@@ -6,7 +6,7 @@ module AgreementEngine
 
     module_function
 
-    def run
+    def run(signer_class: nil, time_column: nil)
       left_out = []
       legacy_versions.group_by(&:document_type).each do |document_type, versions|
         page = page_for(document_type)
@@ -15,7 +15,19 @@ module AgreementEngine
           left_out << [version.document_type, version.version, missed] if missed.any?
         end
       end
+      carry_over_acceptances(signer_class) if signer_class
       Report.new(left_out: left_out)
+    end
+
+    def carry_over_acceptances(signer_class)
+      AgreementEngine.config.agreements.each do |agreement|
+        signer_class.where.not(agreement.version_column => nil).find_each do |signer|
+          document = Document.find_by(id: signer.public_send(agreement.version_column))
+          next unless document
+
+          Acceptance.create!(signer: signer, document: document, content_hash: document.content_hash, byte_form_version: document.byte_form_version, carried_over: true)
+        end
+      end
     end
 
     def legacy_versions
