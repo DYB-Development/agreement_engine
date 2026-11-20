@@ -19,4 +19,16 @@ class AgreementEngine::AcceptanceTest < ActiveSupport::TestCase
 
     assert_not @user.accepted_current?(:terms_of_service)
   end
+
+  test "changing an acceptance raises and leaves it unchanged" do
+    acceptance = @user.accept_version!(nil, @v1)
+
+    assert_raises(ActiveRecord::ReadOnlyRecord) { acceptance.update!(ip_address: "198.51.100.1") }
+  end
+
+  test "deleting an acceptance raises and keeps it" do
+    acceptance = @user.accept_version!(nil, @v1)
+
+    assert_raises(ActiveRecord::ReadOnlyRecord) { acceptance.destroy }
+  end
 end

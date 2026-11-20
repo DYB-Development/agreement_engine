@@ -5,6 +5,11 @@ module AgreementEngine
     self.table_name = "agreement_engine_acceptances"
 
     belongs_to :signer, polymorphic: true
+
+    def readonly?
+      persisted?
+    end
+
     belongs_to :document, class_name: "AgreementEngine::Document"
 
     def self.record!(signer:, document:, request:, statement:, button_text:, evidence: {})
