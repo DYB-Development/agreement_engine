@@ -42,4 +42,37 @@ class AgreementEngine::UpgradeTest < ActiveSupport::TestCase
     assert_equal [[@user, @terms_v2, true], [@user, @privacy, true]].sort_by { |row| row[1].id },
       AgreementEngine::Acceptance.order(:document_id).map { |acceptance| [acceptance.signer, acceptance.document, acceptance.carried_over] }
   end
+
+  test "a named time column gives each carried-over acceptance its time, marked as reported by the host" do
+    @user.update_column(:updated_at, Time.utc(2026, 6, 1, 12, 0))
+
+    AgreementEngine::Upgrade.run(signer_class: User, time_column: :updated_at)
+
+    assert_equal [Time.utc(2026, 6, 1, 12, 0), true], AgreementEngine::Acceptance.first.then { |acceptance| [acceptance.accepted_at, acceptance.time_reported_by_host] }
+  end
+
+  test "with no time column named, a carried-over acceptance records no time" do
+    AgreementEngine::Upgrade.run(signer_class: User)
+
+    assert_equal [nil, false], AgreementEngine::Acceptance.first.then { |acceptance| [acceptance.accepted_at, acceptance.time_reported_by_host] }
+  end
+
+  test "each carried-over acceptance records the person as they are at upgrade time, marked as taken then" do
+    travel_to Time.utc(2026, 11, 20, 9, 0) do
+      AgreementEngine::Upgrade.run(signer_class: User)
+    end
+
+    assert_equal [{"id" => @user.id, "name" => "Pat Lee", "email" => "pat@example.com"}, Time.utc(2026, 11, 20, 9, 0)],
+      AgreementEngine::Acceptance.first.then { |acceptance| [acceptance.person, acceptance.snapshot_taken_at] }
+  end
+
+  test "an evidence hook that needs a request still lets the upgrade record the person's name and email" do
+    AgreementEngine.config.evidence_method = ->(controller, _signer) { {account: {"id" => controller.current_account.id}} }
+
+    AgreementEngine::Upgrade.run(signer_class: User)
+
+    assert_equal "pat@example.com", AgreementEngine::Acceptance.first.person["email"]
+  ensure
+    AgreementEngine.config.evidence_method = nil
+  end
 end
