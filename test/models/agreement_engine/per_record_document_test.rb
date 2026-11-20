@@ -47,4 +47,10 @@ class AgreementEngine::PerRecordDocumentTest < ActiveSupport::TestCase
 
     assert_equal revised, AgreementEngine.current_for(:plan_sign_off, @record)
   end
+
+  test "a record's document is never taken as the current version of a standing document" do
+    AgreementEngine.issue_for!(:plan_sign_off, @record)
+
+    assert_nil AgreementEngine::Document.current(:plan_sign_off)
+  end
 end

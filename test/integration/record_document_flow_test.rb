@@ -91,4 +91,13 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
 
     assert_empty AgreementEngine.signers_for(:plan_sign_off, @client)
   end
+
+  test "an unsigned record document never redirects a signed-in person to accept it" do
+    AgreementEngine::Acceptance.create!(signer: @client, document: AgreementEngine::Document.create!(document_type: "terms_of_service", version: "1.0", content: "Terms", effective_at: 1.day.ago), accepted_at: Time.current)
+    AgreementEngine::Acceptance.create!(signer: @client, document: AgreementEngine::Document.create!(document_type: "privacy_policy", version: "1.0", content: "Privacy", effective_at: 1.day.ago), accepted_at: Time.current)
+
+    get "/"
+
+    assert_response :success
+  end
 end

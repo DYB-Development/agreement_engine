@@ -42,7 +42,7 @@ module AgreementEngine
     end
 
     def self.current(document_type)
-      where(document_type: document_type)
+      where(document_type: document_type, subject_id: nil)
         .published
         .order(effective_at: :desc)
         .first
