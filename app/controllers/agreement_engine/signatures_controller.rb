@@ -26,7 +26,7 @@ module AgreementEngine
           evidence: AgreementEngine.config.evidence(self, signer),
           signature: {strength: "signature", typed_name: typed_name, consent: signer.held_consent}
         )
-        redirect_to main_app.root_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
+        redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       end
     end
 
@@ -47,8 +47,17 @@ module AgreementEngine
     def require_consent
       return if signer.holds_consent?
 
-      session[:agreement_engine_after_consent] = agreement_engine.signature_path(@type.key)
+      session[:agreement_engine_after_consent] = form_url
       redirect_to agreement_engine.consent_path
+    end
+
+    def form_url
+      agreement_engine.signature_path(@type.key)
+    end
+    helper_method :form_url
+
+    def after_signing_path
+      main_app.root_path
     end
 
     def set_type_and_version

@@ -5,7 +5,7 @@
     <%= drawn_document(@version.frozen_copy["document"], values: @version.frozen_copy["values"]) %>
   </article>
 
-  <%= form_with(scope: :signature, url: agreement_engine.signature_path(@type.key), method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>
+  <%= form_with(scope: :signature, url: form_url, method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>
     <% if @error %>
       <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
     <% end %>
