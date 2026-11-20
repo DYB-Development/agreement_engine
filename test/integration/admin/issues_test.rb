@@ -27,6 +27,15 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Our privacy promise"
   end
 
+  test "an issued version shows its SHA-256 hash" do
+    sign_in(@admin)
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "2.0", effective_at: 1.day.ago)
+
+    get agreement_engine.admin_document_path(issued)
+
+    assert_includes response.body, issued.content_hash
+  end
+
   private
 
   def document_with_heading(text)
