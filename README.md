@@ -144,6 +144,12 @@ back afterwards. The page shows signing wording and asks for the person's typed
 full name, and a submission without one is refused. The signature is kept as an
 acceptance that also holds the typed name and the consent it relied on.
 
+The signing form carries the hash of the version shown. A submission for a
+version that is no longer current is refused and the current version is shown.
+A person who withdrew consent is sent back to `/consent`. Submitting the same
+form twice records one signature. A page holding an element with no PDF drawing
+cannot be issued, and the refusal names the element.
+
 ## Documents for one record
 
 A per-record type is filled from a template page with one of the host's
