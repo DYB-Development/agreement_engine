@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Registered document types with a key, title, kind and strength, read alongside the listed agreements
+- Issuing a published keystone_ui-pages page version as a document version, with a frozen copy and a SHA-256 hash of its byte form
+- Issued versions refuse edits and deletion
+- A List element, bulleted or numbered, in the keystone_ui-pages builder
+- A runtime dependency on keystone_ui-pages
+
 ## [0.1.0] - 2026-02-12
 
 ### Added

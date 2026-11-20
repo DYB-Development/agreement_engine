@@ -45,6 +45,31 @@ AgreementEngine.configure do |config|
 end
 ```
 
+### Register document types
+
+A host can register document types of its own beside the agreements above.
+Each agreement listed the existing way is also available as a registered type.
+
+```ruby
+AgreementEngine.configure do |config|
+  config.document_types = [
+    AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept)
+  ]
+end
+```
+
+### Write and issue documents with keystone_ui-pages
+
+Document content is written in the keystone_ui-pages builder, so the host
+installs keystone_ui-pages and runs its migrations before this gem's. The
+builder offers a List element, bulleted or numbered, for legal text.
+
+An admin issues a published page version from **Issue a version** on the
+documents list, with a version label and an effective date. Issuing keeps a
+frozen copy of the page version and records the SHA-256 of its byte form, so
+the issued version keeps its text after the page is edited, republished or
+deleted. An issued version cannot be edited or deleted.
+
 ### 2. Include concerns
 
 ```ruby
@@ -95,6 +120,7 @@ The engine provides:
 - `GET /terms` - Public terms of service page
 - `GET /privacy` - Public privacy policy page
 - `GET /admin/documents` - Admin CRUD for managing document versions
+- `GET /admin/issues/new` - Issue a published page version as a document version
 
 ## Development
 
