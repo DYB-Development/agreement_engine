@@ -25,4 +25,8 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
   test "accepting records the browser" do
     assert_equal "TestBrowser/1.0", accept_terms.user_agent
   end
+
+  test "accepting records the statement shown beside the button" do
+    assert_equal "Before you can proceed, you must read and accept the new Terms Of Service.", accept_terms.statement
+  end
 end

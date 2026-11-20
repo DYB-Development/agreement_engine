@@ -7,7 +7,7 @@ module AgreementEngine
     belongs_to :signer, polymorphic: true
     belongs_to :document, class_name: "AgreementEngine::Document"
 
-    def self.record!(signer:, document:, request:)
+    def self.record!(signer:, document:, request:, statement:)
       create!(
         signer: signer,
         document: document,
@@ -15,7 +15,8 @@ module AgreementEngine
         byte_form_version: document.byte_form_version,
         accepted_at: Time.current,
         ip_address: request.remote_ip,
-        user_agent: request.user_agent
+        user_agent: request.user_agent,
+        statement: statement
       )
     end
   end
