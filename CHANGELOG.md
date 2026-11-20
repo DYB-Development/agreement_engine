@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Acceptance records that keep the evidence of each acceptance and cannot be changed or deleted
 - An evidence hook through which a host supplies the account, further person details and how the session signed in
 - `accepted_current?` and `accepted_versions` on the signer
+- A host handler told about each acceptance and signature once committed, including the first signature on a record's document
 - Per-record documents filled from a template page with one host record's values, with a may-sign check, a return address and `issue_for!`, `current_for` and `signers_for`
 - Documents are addressed by a random code in place of their database id
 - Signature-strength document types with a signing page, a typed name, and consent required first
