@@ -20,4 +20,8 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
     assert_equal AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept),
       AgreementEngine.document_type(:terms_of_service)
   end
+
+  test "a host marks a document type as needing a signature by setting its strength" do
+    assert AgreementEngine::DocumentType.new(key: :sow, title: "Statement of work", kind: :standing, strength: :signature).signature?
+  end
 end

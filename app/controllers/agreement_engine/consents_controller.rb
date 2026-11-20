@@ -20,7 +20,7 @@ module AgreementEngine
         button_text: t("agreement_engine.consents.show.consent"),
         evidence: AgreementEngine.config.evidence(self, signer)
       )
-      redirect_to agreement_engine.consent_path, status: :see_other, notice: t(".given")
+      redirect_to session.delete(:agreement_engine_after_consent) || agreement_engine.consent_path, status: :see_other, notice: t(".given")
     end
 
     def destroy
