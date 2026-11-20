@@ -25,6 +25,10 @@
   </dl>
 
   <article class="prose prose-gray dark:prose-invert max-w-none">
-    <%= @document.content %>
+    <% if @document.content_hash %>
+      <%= drawn_document(@document.frozen_copy["document"], values: @document.frozen_copy["values"]) %>
+    <% else %>
+      <%= @document.content %>
+    <% end %>
   </article>
 </div>

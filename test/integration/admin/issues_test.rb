@@ -14,4 +14,24 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
 
     assert_equal @page.live_version, AgreementEngine::Document.current(:terms_of_service).page_version
   end
+
+  test "an issued version keeps showing its original text after its page is deleted" do
+    sign_in(@admin)
+    page = KeystoneUi::Pages::Page.create!(name: "Privacy", slug: "privacy", document: document_with_heading("Our privacy promise"))
+    page.publish
+    issued = AgreementEngine::Document.issue!(type: :privacy_policy, page_version: page.live_version, version: "2.0", effective_at: 1.day.ago)
+    page.destroy
+
+    get agreement_engine.admin_document_path(issued)
+
+    assert_includes response.body, "Our privacy promise"
+  end
+
+  private
+
+  def document_with_heading(text)
+    document = KeystoneUi::Pages::Document.blank
+    document["sections"][0]["rows"][0]["columns"][0]["elements"] << {"id" => "heading-1", "key" => "heading", "fields" => {"text" => text}}
+    document
+  end
 end
