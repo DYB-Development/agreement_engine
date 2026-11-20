@@ -115,6 +115,17 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_select "td", text: "203.0.113.9"
   end
 
+  test "the issue form offers the consent type once a host enables electronic consent" do
+    AgreementEngine.config.electronic_consent = true
+    sign_in(@admin)
+
+    get agreement_engine.new_admin_issue_path
+
+    assert_select "option[value='electronic_records_consent']", text: "Consent to Electronic Records"
+  ensure
+    AgreementEngine.config.electronic_consent = false
+  end
+
   private
 
   def document_with_heading(text)
