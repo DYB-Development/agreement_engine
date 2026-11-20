@@ -23,6 +23,17 @@ module AgreementEngine
       current.nil? || agreement_engine_acceptances.exists?(document: current)
     end
 
+    def holds_consent?
+      held_consent.present?
+    end
+
+    def held_consent
+      current = AgreementEngine::Document.current(AgreementEngine::Consent::TYPE.key)
+      return unless current
+
+      agreement_engine_acceptances.where(document: current).where.missing(:consent_withdrawal).last
+    end
+
     def needs_acceptance?(agreement)
       agreement.not_accepted_by?(self)
     end

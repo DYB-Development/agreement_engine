@@ -6,6 +6,7 @@ require_relative "agreement_engine/configuration"
 require_relative "agreement_engine/agreement"
 require_relative "agreement_engine/document_type"
 require_relative "agreement_engine/byte_form"
+require_relative "agreement_engine/consent"
 
 module AgreementEngine
   class << self

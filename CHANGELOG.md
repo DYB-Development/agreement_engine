@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Acceptance records that keep the evidence of each acceptance and cannot be changed or deleted
 - An evidence hook through which a host supplies the account, further person details and how the session signed in
 - `accepted_current?` and `accepted_versions` on the signer
+- A consent to electronic records type a host can enable, with a starting page, a consent page, withdrawal records and `holds_consent?`
 
 ### Changed
 

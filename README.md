@@ -128,6 +128,24 @@ version columns on the user table, and accepting writes no column. Existing
 acceptances in those columns are carried over by the upgrade task, which comes
 in a later release.
 
+## Consent to electronic records
+
+A host that asks people to sign turns on the consent type the gem provides:
+
+```ruby
+AgreementEngine.configure do |config|
+  config.electronic_consent = true
+end
+```
+
+`rails agreement_engine:seed` then issues version 1.0 from a starting page
+covering paper copies, withdrawing consent and what a person needs to open and
+keep records. Review that text with your lawyer, edit the page in the builder,
+and issue your own versions like any standing document.
+
+A person gives or withdraws consent at `/consent`. A withdrawal is kept beside
+the consent it ends, and host code asks `user.holds_consent?`.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:
@@ -152,6 +170,9 @@ The engine provides:
 - `GET /privacy` - Public privacy policy page
 - `GET /admin/documents` - Admin CRUD for managing document versions
 - `GET /admin/issues/new` - Issue a published page version as a document version
+- `GET /consent` - Read the consent to electronic records
+- `POST /consent` - Give consent
+- `DELETE /consent` - Withdraw consent
 
 ## Development
 

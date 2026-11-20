@@ -10,6 +10,7 @@ module AgreementEngine
     attr_accessor :sign_out_method
     attr_accessor :admin_auth_method
     attr_accessor :evidence_method
+    attr_accessor :electronic_consent
 
     def initialize
       @agreements = []
@@ -31,7 +32,7 @@ module AgreementEngine
     end
 
     def registered_document_types
-      document_types + agreements.map(&:to_document_type)
+      document_types + agreements.map(&:to_document_type) + (electronic_consent ? [Consent::TYPE] : [])
     end
 
     def evidence(controller, signer)

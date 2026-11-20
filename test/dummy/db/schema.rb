@@ -58,6 +58,15 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.timestamps
   end
 
+  create_table :agreement_engine_consent_withdrawals do |t|
+    t.references :acceptance, null: false, index: {unique: true}
+    t.datetime :withdrawn_at, null: false
+    t.string :ip_address
+    t.text :user_agent
+
+    t.timestamps
+  end
+
   create_table :action_text_rich_texts do |t|
     t.string :name, null: false
     t.text :body
