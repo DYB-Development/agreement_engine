@@ -27,6 +27,10 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- `config.document_types` is the one place documents are declared, and setting `config.agreements` now fails at boot
+- Every registered standing type has a public page, and the seed task issues a starting version for each
+- The admin pages no longer offer the rich-text editor; versions are issued from published pages
+
 - Whether a person has accepted is read from acceptance records, and accepting no longer writes the user's version columns
 
 ## [0.1.0] - 2026-02-12
