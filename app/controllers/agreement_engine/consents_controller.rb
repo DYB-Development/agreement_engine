@@ -23,6 +23,12 @@ module AgreementEngine
       redirect_to agreement_engine.consent_path, status: :see_other, notice: t(".given")
     end
 
+    def destroy
+      consent = signer.held_consent
+      AgreementEngine::ConsentWithdrawal.create!(acceptance: consent, withdrawn_at: Time.current, ip_address: request.remote_ip, user_agent: request.user_agent) if consent
+      redirect_to agreement_engine.consent_path, status: :see_other, notice: t(".withdrawn")
+    end
+
     private
 
     def signer

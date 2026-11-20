@@ -17,4 +17,15 @@ class ConsentFlowTest < ActionDispatch::IntegrationTest
 
     assert_equal [@consent.id, "203.0.113.9"], AgreementEngine::Acceptance.last.then { |acceptance| [acceptance.document_id, acceptance.ip_address] }
   end
+
+  test "withdrawing consent records the time it was withdrawn against the consent" do
+    post agreement_engine.consent_path
+    consent = AgreementEngine::Acceptance.last
+
+    travel_to Time.utc(2026, 12, 1, 9, 0) do
+      delete agreement_engine.consent_path
+    end
+
+    assert_equal [consent.id, Time.utc(2026, 12, 1, 9, 0)], AgreementEngine::ConsentWithdrawal.last.then { |withdrawal| [withdrawal.acceptance_id, withdrawal.withdrawn_at] }
+  end
 end

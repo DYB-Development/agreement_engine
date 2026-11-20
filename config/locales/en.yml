@@ -13,5 +13,9 @@ en:
       show:
         statement: "I have read this disclosure, I can open and keep records as it describes, and I agree to receive and sign records electronically."
         consent: "I Consent"
+        held: "You have consented to electronic records. You can withdraw that consent here."
+        withdraw: "Withdraw"
       create:
         given: "Your consent to electronic records is recorded."
+      destroy:
+        withdrawn: "Your consent to electronic records is withdrawn."

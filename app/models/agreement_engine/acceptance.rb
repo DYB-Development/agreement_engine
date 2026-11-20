@@ -11,6 +11,7 @@ module AgreementEngine
     end
 
     belongs_to :document, class_name: "AgreementEngine::Document"
+    has_one :consent_withdrawal, class_name: "AgreementEngine::ConsentWithdrawal"
 
     def self.record!(signer:, document:, request:, statement:, button_text:, evidence: {})
       create!(
