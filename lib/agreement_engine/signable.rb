@@ -5,11 +5,17 @@ module AgreementEngine
     extend ActiveSupport::Concern
 
     included do
+      has_many :agreement_engine_acceptances, -> { order(:accepted_at, :id) }, as: :signer, class_name: "AgreementEngine::Acceptance"
+
       AgreementEngine.config.agreements.each do |agreement|
         belongs_to :"accepted_#{agreement.document_type}_version",
           class_name: "AgreementEngine::Document",
           optional: true
       end
+    end
+
+    def accepted_versions(document_type)
+      agreement_engine_acceptances.includes(:document).map(&:document).select { |document| document.document_type == document_type.to_s }
     end
 
     def needs_acceptance?(agreement)
