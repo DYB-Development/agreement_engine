@@ -9,6 +9,7 @@ require_relative "agreement_engine/document_type"
 require_relative "agreement_engine/byte_form"
 require_relative "agreement_engine/consent"
 require_relative "agreement_engine/acceptance_event"
+require_relative "agreement_engine/receipt"
 
 module AgreementEngine
   class << self
