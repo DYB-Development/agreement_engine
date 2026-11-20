@@ -22,4 +22,15 @@ class AgreementEngine::UpgradeTest < ActiveSupport::TestCase
 
     assert_equal [["privacy_policy", "2.0", ["table"]]], report.left_out
   end
+
+  test "each carried-over version keeps its label and effective date and is issued, frozen and hashed" do
+    effective_at = @terms_v1.effective_at
+
+    AgreementEngine::Upgrade.run
+
+    upgraded = @terms_v1.reload
+    copy = upgraded.frozen_copy
+    assert_equal ["1.0", effective_at, AgreementEngine::ByteForm.digest(slug: copy["slug"], number: copy["number"], document: copy["document"])],
+      [upgraded.version, upgraded.effective_at, upgraded.content_hash]
+  end
 end

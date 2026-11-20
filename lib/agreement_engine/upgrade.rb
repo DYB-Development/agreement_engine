@@ -32,6 +32,7 @@ module AgreementEngine
       converted = HtmlToPage.convert(version.content.body.to_html)
       page.edit(converted.document)
       page.publish
+      version.issue_in_place!(page.live_version)
       converted.left_out
     end
   end
