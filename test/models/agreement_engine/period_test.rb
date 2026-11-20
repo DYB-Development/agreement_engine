@@ -60,4 +60,16 @@ class AgreementEngine::PeriodTest < ActiveSupport::TestCase
 
     assert_equal [[acceptance], [acceptance]], [AgreementEngine.in_force(account_id: 7, on: Date.new(2027, 1, 1)), AgreementEngine.in_force(record: user, on: Date.new(2027, 1, 1))]
   end
+
+  test "a period is described in words for the person reading it" do
+    assert_equal ["1 year from acceptance", "1 January 2027 to 30 June 2027", "from 1 January 2027"],
+      [{"duration" => "P1Y"}, {"starts_on" => "2027-01-01", "ends_on" => "2027-06-30"}, {"starts_on" => "2027-01-01"}].map { |period| AgreementEngine::Period.describe(period) }
+  end
+
+  test "the signer's copy names the period" do
+    document = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page_version, version: "1.0", effective_at: 1.day.ago, period: {"duration" => "P1Y"})
+    acceptance = accept(document, User.create!(name: "Pat Lee", email: "pat@example.com"), Time.utc(2026, 11, 20))
+
+    assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "Period: 1 year from acceptance, 20 November 2026 to 20 November 2027"
+  end
 end

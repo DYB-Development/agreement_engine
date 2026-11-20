@@ -76,4 +76,15 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to "/"
   end
+
+  test "the signing page shows the period the version covers" do
+    give_consent
+    page = KeystoneUi::Pages::Page.create!(name: "SOW 2", slug: "sow-2", document: KeystoneUi::Pages::Document.blank)
+    page.publish
+    AgreementEngine::Document.issue!(type: :statement_of_work, page_version: page.live_version, version: "2.0", effective_at: 1.hour.ago, period: {"starts_on" => "2027-01-01", "ends_on" => "2027-06-30"})
+
+    get agreement_engine.signature_path(:statement_of_work)
+
+    assert_select "p", text: "Period: 1 January 2027 to 30 June 2027"
+  end
 end

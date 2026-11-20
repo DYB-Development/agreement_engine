@@ -4,6 +4,9 @@
   <% if @version %>
     <%= tag.p t(".last_updated", date: l(@version.effective_at.to_date, format: :long)), class: "mb-4 text-gray-700 leading-normal italic" %>
 
+    <% if (period = AgreementEngine::Period.describe(@version.frozen_copy.to_h["period"])) %>
+      <p class="mb-4 font-medium">Period: <%= period %></p>
+    <% end %>
     <article class="prose prose-gray dark:prose-invert max-w-none">
       <%= @version.content %>
     </article>

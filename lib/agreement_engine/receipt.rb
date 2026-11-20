@@ -22,8 +22,17 @@ module AgreementEngine
         "SHA-256: #{acceptance.content_hash}",
         "Accepted: #{acceptance.accepted_at.utc.strftime("%Y-%m-%d %H:%M:%S UTC")}",
         ("Typed name: #{acceptance.typed_name}" if acceptance.typed_name.present?),
+        period_line(acceptance),
         "agreement_engine #{acceptance.engine_version}, keystone_ui-pages #{acceptance.pages_version}"
       ].compact
+    end
+
+    def period_line(acceptance)
+      described = Period.describe(acceptance.document.frozen_copy.to_h["period"])
+      return unless described
+
+      dates = [acceptance.period_starts_on, acceptance.period_ends_on].compact
+      dates.size == 2 && acceptance.document.frozen_copy["period"]["duration"] ? "Period: #{described}, #{Period.day(dates[0])} to #{Period.day(dates[1])}" : "Period: #{described}"
     end
 
     def byte_form(acceptance)

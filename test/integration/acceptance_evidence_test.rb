@@ -87,6 +87,16 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
     AgreementEngine.config.acceptance_handler = nil
   end
 
+  test "the accept page shows the period the version covers" do
+    page = KeystoneUi::Pages::Page.create!(name: "Terms 3", slug: "terms-3", document: KeystoneUi::Pages::Document.blank)
+    page.publish
+    AgreementEngine::Document.issue!(type: :terms_of_service, page_version: page.live_version, version: "3.0", effective_at: 1.hour.ago, period: {"duration" => "P1Y"})
+
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "p", text: "Period: 1 year from acceptance"
+  end
+
   private
 
   def with_evidence_hook(hook)
