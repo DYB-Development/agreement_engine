@@ -7,4 +7,9 @@ class AgreementEngine::ByteFormTest < ActiveSupport::TestCase
 
     assert_equal first, second
   end
+
+  test "changing one character of the content changes the hash" do
+    assert_not_equal AgreementEngine::ByteForm.digest(slug: "terms", number: 1, document: {"title" => "Terms"}),
+      AgreementEngine::ByteForm.digest(slug: "terms", number: 1, document: {"title" => "Termz"})
+  end
 end
