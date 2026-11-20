@@ -17,6 +17,7 @@ module AgreementEngine
 
     before_destroy :refuse_when_issued
     validate :unchanged_once_issued, on: :update
+    validate :drawable_as_pdf, on: :create
 
     has_many :acceptances, -> { order(:accepted_at, :id) }, class_name: "AgreementEngine::Acceptance"
 
@@ -84,6 +85,14 @@ module AgreementEngine
 
     def unchanged_once_issued
       errors.add(:base, FROZEN) if content_hash_was.present? && changed?
+    end
+
+    def drawable_as_pdf
+      return unless frozen_copy
+
+      KeystoneUi::Pages::Operations.elements(frozen_copy["document"]).map { |element| KeystoneUi::Pages.catalog.find(element["key"]) }.uniq.each do |definition|
+        errors.add(:base, "The #{definition.name} element cannot be drawn as a PDF, so this page cannot be issued") if definition && !definition.pdf
+      end
     end
 
     def refuse_when_issued
