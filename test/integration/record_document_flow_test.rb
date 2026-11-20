@@ -78,4 +78,17 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
 
     assert_equal "click_accept", quote.acceptances.last&.strength
   end
+
+  test "host code asks who has signed a record's current document" do
+    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co"}}
+
+    assert_equal [@client], AgreementEngine.signers_for(:plan_sign_off, @client)
+  end
+
+  test "a record's current document has no signers once a revised one is issued" do
+    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co"}}
+    AgreementEngine.issue_for!(:plan_sign_off, @client)
+
+    assert_empty AgreementEngine.signers_for(:plan_sign_off, @client)
+  end
 end

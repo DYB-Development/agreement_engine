@@ -31,6 +31,10 @@ module AgreementEngine
       Document.where(document_type: type_key.to_s, subject: record).order(:created_at, :id).last
     end
 
+    def signers_for(type_key, record)
+      current_for(type_key, record)&.acceptances.to_a.map(&:signer).uniq
+    end
+
     def document_type(key)
       config.registered_document_types.find { |type| type.key == key.to_sym }
     end
