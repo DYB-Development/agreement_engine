@@ -59,6 +59,18 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "accepting adds the person details a host's evidence hook supplies" do
+    with_evidence_hook(->(_controller, _signer) { {person: {"phone" => "555-0100"}} }) do
+      assert_equal "555-0100", accept_terms.person["phone"]
+    end
+  end
+
+  test "accepting records how the session signed in as a host's evidence hook reports it" do
+    with_evidence_hook(->(_controller, _signer) { {sign_in: {"methods" => ["password", "totp"]}} }) do
+      assert_equal({"methods" => ["password", "totp"]}, accept_terms.sign_in)
+    end
+  end
+
   private
 
   def with_evidence_hook(hook)

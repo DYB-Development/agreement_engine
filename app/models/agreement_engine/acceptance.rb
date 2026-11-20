@@ -10,8 +10,9 @@ module AgreementEngine
     def self.record!(signer:, document:, request:, statement:, button_text:, evidence: {})
       create!(
         signer: signer,
-        person: person_snapshot(signer),
+        person: person_snapshot(signer).merge(evidence[:person].to_h.stringify_keys),
         account: evidence[:account],
+        sign_in: evidence[:sign_in],
         document: document,
         content_hash: document.content_hash,
         byte_form_version: document.byte_form_version,
