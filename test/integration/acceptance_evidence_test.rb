@@ -17,4 +17,8 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
   test "accepting records the issued version's hash" do
     assert_equal @terms.content_hash, accept_terms.content_hash
   end
+
+  test "accepting records the IP address" do
+    assert_equal "203.0.113.9", accept_terms.ip_address
+  end
 end

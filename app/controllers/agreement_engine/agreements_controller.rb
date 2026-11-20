@@ -15,7 +15,7 @@ module AgreementEngine
     def update
       if @version
         agreement_engine_current_user.accept_version!(@agreement, @version)
-        AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version)
+        AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request)
       end
       redirect_to after_accepted_path, status: :see_other
     end
