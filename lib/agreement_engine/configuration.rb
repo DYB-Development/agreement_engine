@@ -3,6 +3,7 @@
 module AgreementEngine
   class Configuration
     attr_accessor :agreements
+    attr_accessor :document_types
     attr_accessor :current_user_method
     attr_accessor :signed_in_method
     attr_accessor :auth_controller_method
@@ -11,6 +12,7 @@ module AgreementEngine
 
     def initialize
       @agreements = []
+      @document_types = []
 
       @current_user_method = ->(c) { c.current_user }
       @signed_in_method = ->(c) { c.user_signed_in? }

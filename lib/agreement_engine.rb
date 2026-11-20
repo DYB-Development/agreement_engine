@@ -3,6 +3,7 @@
 require_relative "agreement_engine/version"
 require_relative "agreement_engine/configuration"
 require_relative "agreement_engine/agreement"
+require_relative "agreement_engine/document_type"
 
 module AgreementEngine
   class << self
@@ -12,6 +13,10 @@ module AgreementEngine
 
     def configure
       yield config
+    end
+
+    def document_type(key)
+      config.document_types.find { |type| type.key == key.to_sym }
     end
   end
 end
