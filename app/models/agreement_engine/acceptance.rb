@@ -14,6 +14,8 @@ module AgreementEngine
         content_hash: document.content_hash,
         byte_form_version: document.byte_form_version,
         accepted_at: Time.current,
+        engine_version: AgreementEngine::VERSION,
+        pages_version: KeystoneUi::Pages::VERSION,
         ip_address: request.remote_ip,
         user_agent: request.user_agent,
         statement: statement,

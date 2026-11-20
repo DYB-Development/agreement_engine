@@ -33,4 +33,10 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
   test "accepting records the text of the button pressed" do
     assert_equal "I Accept", accept_terms.button_text
   end
+
+  test "accepting records the versions of agreement_engine and keystone_ui-pages in use" do
+    acceptance = accept_terms
+
+    assert_equal [AgreementEngine::VERSION, KeystoneUi::Pages::VERSION], [acceptance.engine_version, acceptance.pages_version]
+  end
 end
