@@ -34,11 +34,7 @@
   </dl>
 
   <article class="prose prose-gray dark:prose-invert max-w-none">
-    <% if @document.content_hash %>
-      <%= drawn_document(@document.frozen_copy["document"], values: @document.frozen_copy["values"]) %>
-    <% else %>
-      <%= @document.content %>
-    <% end %>
+    <%= render "agreement_engine/documents/issued_version", document: @document %>
   </article>
 
   <h2 class="text-xl font-bold mt-10 mb-4">Acceptances</h2>

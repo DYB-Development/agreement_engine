@@ -1,0 +1,5 @@
+<% if document.issued? %>
+  <%= drawn_document(document.frozen_copy["document"], values: document.frozen_copy["values"]) %>
+<% else %>
+  <%= document.content %>
+<% end %>

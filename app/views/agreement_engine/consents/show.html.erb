@@ -1,6 +1,6 @@
 <div class="max-w-4xl mx-auto p-4 my-8 lg:my-24">
   <article class="prose prose-gray dark:prose-invert max-w-none">
-    <%= drawn_document(@version.frozen_copy["document"], values: @version.frozen_copy["values"]) %>
+    <%= render "agreement_engine/documents/issued_version", document: @version %>
   </article>
 
   <div class="mt-8 sm:mt-16 text-center">

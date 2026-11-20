@@ -5,7 +5,7 @@
     <p class="mb-4 font-medium">Period: <%= period %></p>
   <% end %>
   <article class="prose prose-gray dark:prose-invert max-w-none">
-    <%= drawn_document(@version.frozen_copy["document"], values: @version.frozen_copy["values"]) %>
+    <%= render "agreement_engine/documents/issued_version", document: @version %>
   </article>
 
   <%= form_with(scope: :signature, url: form_url, method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>

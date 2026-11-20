@@ -97,6 +97,19 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
     assert_select "p", text: "Period: 1 year from acceptance"
   end
 
+  test "the accept page draws the issued version from its frozen copy" do
+    document = KeystoneUi::Pages::Document.blank
+    document["sections"][0]["rows"][0]["columns"][0]["elements"] << {"id" => "h1", "key" => "heading", "fields" => {"text" => "Issued wording"}}
+    page = KeystoneUi::Pages::Page.create!(name: "Terms 4", slug: "terms-4", document: document)
+    page.publish
+    AgreementEngine::Document.issue!(type: :terms_of_service, page_version: page.live_version, version: "4.0", effective_at: 1.hour.ago)
+    page.edit(KeystoneUi::Pages::Document.blank)
+
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_includes response.body, "Issued wording"
+  end
+
   private
 
   def with_evidence_hook(hook)
