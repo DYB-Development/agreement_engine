@@ -97,6 +97,37 @@ mount AgreementEngine::Engine, at: "/"
 rails agreement_engine:seed
 ```
 
+## Acceptance evidence
+
+Every acceptance is kept as its own record, and a record cannot be changed or
+deleted. Each one holds the time, the version accepted and its hash, the IP
+address, the browser, the statement and button text shown, the
+agreement_engine and keystone_ui-pages versions, and a snapshot of the
+person's id, name and email as they were at that moment.
+
+A host adds the account, further person details and how the session signed in
+through one hook:
+
+```ruby
+AgreementEngine.configure do |config|
+  config.evidence_method = ->(controller, user) {
+    {
+      account: {id: controller.current_account.id, name: controller.current_account.name},
+      person: {phone: user.phone},
+      sign_in: {methods: controller.session_sign_in_methods}
+    }
+  }
+end
+```
+
+Host code can ask `user.accepted_current?(:terms_of_service)` and list
+`user.accepted_versions(:terms_of_service)`.
+
+Whether a person has accepted is now read from these records, not from the
+version columns on the user table, and accepting writes no column. Existing
+acceptances in those columns are carried over by the upgrade task, which comes
+in a later release.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:
