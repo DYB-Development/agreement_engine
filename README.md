@@ -229,6 +229,19 @@ command installed with the gem:
 agreement_engine-verify copy.json <hash>
 ```
 
+## Integrity
+
+On PostgreSQL, the gem's migration adds triggers that reject any update or
+delete of an acceptance, and of an issued version's frozen copy, hash or
+effective date, even when run directly in SQL. Other databases keep the
+refusal in the app only.
+
+The admin page marks an issued version whose frozen copy no longer produces its
+hash, and one whose page version has since changed or been deleted. Run
+`rails agreement_engine:check_hashes` to list every issued version and
+acceptance whose hashes disagree. It exits with a failure when it finds one, so
+it can run on a schedule.
+
 ## Being told about acceptances
 
 A host sets one handler, which is called once each acceptance or signature is
