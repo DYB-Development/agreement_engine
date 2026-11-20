@@ -17,6 +17,8 @@ module AgreementEngine
         @error = t("agreement_engine.signatures.update.stale")
         @version = current_version
         render :show, status: :conflict
+      elsif already_signed?
+        redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       elsif typed_name.blank?
         @error = t("agreement_engine.signatures.update.blank")
         render :show, status: :unprocessable_entity
@@ -32,9 +34,15 @@ module AgreementEngine
         )
         redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       end
+    rescue ActiveRecord::RecordNotUnique
+      redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
     end
 
     private
+
+    def already_signed?
+      @version.acceptances.exists?(signer: signer, strength: "signature")
+    end
 
     def stale?
       params.dig(:signature, :content_hash).to_s != @version.content_hash.to_s || current_version != @version

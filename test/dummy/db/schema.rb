@@ -69,6 +69,8 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.timestamps
   end
 
+  add_index :agreement_engine_acceptances, [:signer_type, :signer_id, :document_id], unique: true, where: "strength = 'signature'", name: "index_agreement_engine_acceptances_one_signature"
+
   create_table :agreement_engine_consent_withdrawals do |t|
     t.references :acceptance, null: false, index: {unique: true}
     t.datetime :withdrawn_at, null: false

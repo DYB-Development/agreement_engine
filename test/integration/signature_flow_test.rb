@@ -98,4 +98,21 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     assert_equal [0, true], [AgreementEngine::Acceptance.where(strength: "signature").count, response.body.include?("This document changed while you were reading it.")]
   end
+
+  test "a signature submitted after the person withdrew consent is refused and the consent page is shown" do
+    give_consent
+    AgreementEngine::ConsentWithdrawal.create!(acceptance: @consent, withdrawn_at: Time.current)
+
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: @sow.content_hash}}
+
+    assert_equal [0, agreement_engine.consent_path], [@sow.acceptances.count, URI(response.location).path]
+  end
+
+  test "submitting the same signing form twice records one signature" do
+    give_consent
+
+    2.times { patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: @sow.content_hash}} }
+
+    assert_equal 1, @sow.acceptances.count
+  end
 end
