@@ -11,6 +11,9 @@ module AgreementEngine
     attr_accessor :admin_auth_method
     attr_accessor :evidence_method
     attr_accessor :electronic_consent
+    attr_accessor :values_method
+    attr_accessor :may_sign_method
+    attr_accessor :return_check_method
 
     def initialize
       @agreements = []
@@ -37,6 +40,18 @@ module AgreementEngine
 
     def evidence(controller, signer)
       (evidence_method&.call(controller, signer) || {}).to_h.transform_keys(&:to_sym)
+    end
+
+    def allowed_return_path(path)
+      path = path.to_s
+      return unless path.start_with?("/") && !path.start_with?("//") && !path.include?("\\")
+      return if return_check_method && return_check_method.call(path) != true
+
+      path
+    end
+
+    def may_sign?(controller, person, document)
+      may_sign_method.present? && may_sign_method.call(controller, person, document) == true
     end
 
     def current_user(controller) = current_user_method.call(controller)

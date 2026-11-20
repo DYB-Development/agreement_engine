@@ -24,4 +24,10 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
   test "a host marks a document type as needing a signature by setting its strength" do
     assert AgreementEngine::DocumentType.new(key: :sow, title: "Statement of work", kind: :standing, strength: :signature).signature?
   end
+
+  test "a host registers a per-record type naming the template page it is filled from" do
+    plan = AgreementEngine::DocumentType.new(key: :plan_sign_off, title: "Plan sign-off", kind: :per_record, strength: :signature, template: "plan-sign-off")
+
+    assert_equal "plan-sign-off", plan.template
+  end
 end

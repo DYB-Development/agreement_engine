@@ -160,6 +160,41 @@ back afterwards. The page shows signing wording and asks for the person's typed
 full name, and a submission without one is refused. The signature is kept as an
 acceptance that also holds the typed name and the consent it relied on.
 
+## Documents for one record
+
+A per-record type is filled from a template page with one of the host's
+records, such as a quote, a contract or a plan, and accepted or signed in that
+exact form.
+
+```ruby
+AgreementEngine.configure do |config|
+  config.document_types = [
+    AgreementEngine::DocumentType.new(key: :plan_sign_off, title: "Plan sign-off", kind: :per_record, strength: :signature, template: "plan-sign-off")
+  ]
+  config.values_method = ->(record, type) { {client_name: record.client.name} }
+  config.may_sign_method = ->(controller, person, document) { document.subject.client.members.include?(person) }
+  config.return_check_method = ->(path) { path.start_with?("/plans/") }
+end
+```
+
+The template is a keystone_ui-pages page whose text is bound to the named
+values, and parts of it can be shown or hidden by a value.
+
+```ruby
+document = AgreementEngine.issue_for!(:plan_sign_off, plan)
+agreement_engine.record_document_path(document, return_to: plan_path(plan))
+AgreementEngine.current_for(:plan_sign_off, plan)
+AgreementEngine.signers_for(:plan_sign_off, plan)
+```
+
+Issuing copies the template's live version and the record's values at that
+moment, so a later change to the record changes neither the document nor its
+hash. Issuing again for the same record keeps the earlier document and its
+acceptances. A person the may-sign check refuses gets a not-found page. The
+return address is followed only when it is a path on the host's own site that
+the return check allows. Record documents never trigger the accept redirect and
+never appear on the public pages.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:
@@ -189,6 +224,8 @@ The engine provides:
 - `DELETE /consent` - Withdraw consent
 - `GET /signatures/:document_type` - Signing page for a signature-strength type
 - `PATCH /signatures/:document_type` - Sign it
+- `GET /records/:code` - Accept or sign one record's document
+- `PATCH /records/:code` - Accept or sign it
 
 ## Development
 

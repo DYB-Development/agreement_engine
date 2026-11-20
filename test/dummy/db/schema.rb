@@ -32,11 +32,14 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.json :frozen_copy
     t.string :content_hash
     t.integer :byte_form_version
+    t.references :subject, polymorphic: true
+    t.string :code
 
     t.timestamps
   end
 
-  add_index :agreement_engine_documents, [:document_type, :version], unique: true
+  add_index :agreement_engine_documents, :code, unique: true
+  add_index :agreement_engine_documents, [:document_type, :subject_type, :subject_id, :version], unique: true, name: "index_agreement_engine_documents_on_type_subject_and_version"
   add_index :agreement_engine_documents, [:document_type, :effective_at]
 
   create_table :agreement_engine_acceptances do |t|
