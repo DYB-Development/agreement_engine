@@ -146,6 +146,20 @@ and issue your own versions like any standing document.
 A person gives or withdraws consent at `/consent`. A withdrawal is kept beside
 the consent it ends, and host code asks `user.holds_consent?`.
 
+## Signatures
+
+A document type whose strength is `:signature` is signed rather than clicked:
+
+```ruby
+AgreementEngine::DocumentType.new(key: :statement_of_work, title: "Statement of Work", kind: :standing, strength: :signature)
+```
+
+Its signing page is at `/signatures/statement_of_work`. A person without
+current consent to electronic records is sent to `/consent` first and brought
+back afterwards. The page shows signing wording and asks for the person's typed
+full name, and a submission without one is refused. The signature is kept as an
+acceptance that also holds the typed name and the consent it relied on.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:
@@ -173,6 +187,8 @@ The engine provides:
 - `GET /consent` - Read the consent to electronic records
 - `POST /consent` - Give consent
 - `DELETE /consent` - Withdraw consent
+- `GET /signatures/:document_type` - Signing page for a signature-strength type
+- `PATCH /signatures/:document_type` - Sign it
 
 ## Development
 
