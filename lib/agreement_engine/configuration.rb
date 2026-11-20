@@ -16,6 +16,7 @@ module AgreementEngine
     attr_accessor :acceptance_handler
     attr_accessor :copy_email_types
     attr_accessor :mailer_from
+    attr_accessor :pages_place
 
     def initialize
       @document_types = []

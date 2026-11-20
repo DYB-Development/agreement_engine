@@ -61,6 +61,7 @@ module AgreementEngine
     def page_for(document_type)
       KeystoneUi::Pages::Page.find_or_create_by!(slug: "agreement-#{document_type.to_s.dasherize}") do |page|
         page.name = document_type.to_s.titleize
+        page.place = AgreementEngine.config.pages_place
       end
     end
 

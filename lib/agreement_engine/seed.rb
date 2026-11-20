@@ -17,7 +17,7 @@ module AgreementEngine
     def issue_starting_version(type, text)
       return if Document.where(document_type: type.key.to_s, subject_id: nil).exists?
 
-      page = KeystoneUi::Pages::Page.create!(name: type.title, slug: "agreement-#{type.key.to_s.dasherize}", document: document_of(text))
+      page = KeystoneUi::Pages::Page.create!(name: type.title, slug: "agreement-#{type.key.to_s.dasherize}", place: AgreementEngine.config.pages_place, document: document_of(text))
       page.publish
       Document.issue!(type: type.key, page_version: page.live_version, version: "1.0", effective_at: Time.current)
     end
