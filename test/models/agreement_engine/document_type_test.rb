@@ -17,7 +17,7 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
   end
 
   test "each agreement a host lists the existing way is a registered standing click-accept type" do
-    assert_equal AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept),
+    assert_equal AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true),
       AgreementEngine.document_type(:terms_of_service)
   end
 

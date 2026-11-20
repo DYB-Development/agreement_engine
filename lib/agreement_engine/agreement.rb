@@ -17,7 +17,7 @@ module AgreementEngine
     end
 
     def to_document_type
-      DocumentType.new(key: document_type.to_sym, title: title, kind: :standing, strength: :click_accept)
+      DocumentType.new(key: document_type.to_sym, title: title, kind: :standing, strength: :click_accept, prompts: prompt_when_updated)
     end
 
     def to_param = id
