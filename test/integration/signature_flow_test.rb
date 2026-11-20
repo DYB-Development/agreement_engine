@@ -68,4 +68,12 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     assert_equal "Sign", AgreementEngine::Acceptance.where(document: @sow).last.button_text
   end
+
+  test "a click-accept type has no signing page and keeps its accept page" do
+    give_consent
+
+    get agreement_engine.signature_path(:terms_of_service)
+
+    assert_redirected_to "/"
+  end
 end
