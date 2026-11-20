@@ -70,4 +70,12 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
   ensure
     AgreementEngine.config.return_check_method = nil
   end
+
+  test "a click-accept record document is accepted without a typed name" do
+    quote = AgreementEngine.issue_for!(:quote, @client)
+
+    patch agreement_engine.record_document_path(quote)
+
+    assert_equal "click_accept", quote.acceptances.last&.strength
+  end
 end

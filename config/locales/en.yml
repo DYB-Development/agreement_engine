@@ -27,3 +27,9 @@ en:
       update:
         blank: "Type your full name to sign."
         signed: "You signed the %{document}."
+    record_documents:
+      show:
+        statement: "By selecting I Accept, you agree to the %{document} above."
+        accept: "I Accept"
+      update:
+        accepted: "You accepted the %{document}."

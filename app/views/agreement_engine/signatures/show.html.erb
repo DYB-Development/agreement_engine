@@ -10,15 +10,23 @@
       <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
     <% end %>
 
-    <p><%= t(".statement", document: @type.title) %></p>
+    <% if @type.signature? %>
+      <p><%= t("agreement_engine.signatures.show.statement", document: @type.title) %></p>
 
-    <div>
-      <%= form.label :typed_name, t(".typed_name"), class: "block text-sm font-medium text-gray-700" %>
-      <%= form.text_field :typed_name, autocomplete: "name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
-    </div>
+      <div>
+        <%= form.label :typed_name, t("agreement_engine.signatures.show.typed_name"), class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :typed_name, autocomplete: "name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
+      </div>
 
-    <div>
-      <%= form.submit t(".sign"), class: "btn btn-primary btn-large" %>
-    </div>
+      <div>
+        <%= form.submit t("agreement_engine.signatures.show.sign"), class: "btn btn-primary btn-large" %>
+      </div>
+    <% else %>
+      <p><%= t("agreement_engine.record_documents.show.statement", document: @type.title) %></p>
+
+      <div>
+        <%= form.submit t("agreement_engine.record_documents.show.accept"), class: "btn btn-primary btn-large" %>
+      </div>
+    <% end %>
   <% end %>
 </div>
