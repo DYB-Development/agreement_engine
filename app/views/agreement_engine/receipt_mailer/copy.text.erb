@@ -1,0 +1,5 @@
+<%= t(".body", document: @type&.title || @acceptance.document.document_type.titleize) %>
+
+<% AgreementEngine::Receipt.summary_lines(@acceptance).each do |line| %>
+<%= line %>
+<% end %>

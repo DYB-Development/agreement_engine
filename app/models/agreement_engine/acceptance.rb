@@ -7,6 +7,7 @@ module AgreementEngine
     belongs_to :signer, polymorphic: true
 
     after_create_commit :tell_host
+    after_create_commit :email_copy
 
     def readonly?
       persisted?
@@ -34,6 +35,15 @@ module AgreementEngine
         button_text: button_text,
         **signature
       )
+    end
+
+    def email_copy
+      return unless AgreementEngine.config.copy_email_types.map(&:to_s).include?(document.document_type)
+      return if person.to_h["email"].blank?
+
+      AgreementEngine::ReceiptMailer.copy(self).deliver_later
+    rescue => error
+      Rails.error.report(error, handled: true, source: "agreement_engine")
     end
 
     def tell_host
