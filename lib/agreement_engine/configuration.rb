@@ -11,6 +11,7 @@ module AgreementEngine
     attr_accessor :admin_auth_method
     attr_accessor :evidence_method
     attr_accessor :electronic_consent
+    attr_accessor :values_method
 
     def initialize
       @agreements = []

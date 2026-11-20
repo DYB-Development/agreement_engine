@@ -2,6 +2,7 @@
 
 require_relative "agreement_engine/version"
 require "keystone_ui/pages"
+require "keystone_ui/pages/document"
 require_relative "agreement_engine/configuration"
 require_relative "agreement_engine/agreement"
 require_relative "agreement_engine/document_type"
@@ -16,6 +17,14 @@ module AgreementEngine
 
     def configure
       yield config
+    end
+
+    def issue_for!(type_key, record)
+      type = document_type(type_key)
+      page_version = KeystoneUi::Pages::Page.find_by!(slug: type.template).live_version
+      values = config.values_method.call(record, type).to_h.stringify_keys
+      label = (Document.where(document_type: type.key.to_s, subject: record).count + 1).to_s
+      Document.issue!(type: type.key, page_version: page_version, version: label, effective_at: Time.current, subject: record, values: values)
     end
 
     def document_type(key)

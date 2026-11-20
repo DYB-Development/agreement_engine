@@ -55,7 +55,7 @@ module AgreementEngine
       end
 
       def set_document
-        @document = AgreementEngine::Document.find(params[:id])
+        @document = AgreementEngine::Document.find_by!(code: params[:id])
       end
 
       def document_params
