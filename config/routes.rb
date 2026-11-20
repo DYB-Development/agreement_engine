@@ -6,5 +6,6 @@ AgreementEngine::Engine.routes.draw do
 
   namespace :admin do
     resources :documents
+    resources :issues, only: [:new, :create]
   end
 end
