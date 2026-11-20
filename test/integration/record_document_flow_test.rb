@@ -32,4 +32,20 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
 
     assert_select "h2, h1, h3, div", text: /Acme Co/
   end
+
+  test "a person the host refuses cannot see a record's document" do
+    sign_in User.create!(name: "Someone Else", email: "else@example.com")
+
+    get agreement_engine.record_document_path(@plan_document)
+
+    assert_response :not_found
+  end
+
+  test "a person the host refuses cannot sign a record's document" do
+    sign_in User.create!(name: "Someone Else", email: "else@example.com")
+
+    patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Someone Else"}}
+
+    assert_equal 0, @plan_document.acceptances.count
+  end
 end
