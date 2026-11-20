@@ -41,4 +41,38 @@
       <%= @document.content %>
     <% end %>
   </article>
+
+  <h2 class="text-xl font-bold mt-10 mb-4">Acceptances</h2>
+  <% if @document.acceptances.any? %>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead>
+          <tr>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">Accepted</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">Person</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">Account</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">IP address</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">Browser</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">Signed in with</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-500">Hash</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <% @document.acceptances.each do |acceptance| %>
+            <tr>
+              <td class="px-3 py-2"><%= acceptance.accepted_at&.strftime("%B %d, %Y %H:%M %Z") %></td>
+              <td class="px-3 py-2"><%= acceptance.person.to_h.values_at("name", "email").compact.join(", ") %></td>
+              <td class="px-3 py-2"><%= acceptance.account.to_h["name"] %></td>
+              <td class="px-3 py-2"><%= acceptance.ip_address %></td>
+              <td class="px-3 py-2"><%= acceptance.user_agent %></td>
+              <td class="px-3 py-2"><%= Array(acceptance.sign_in.to_h["methods"]).join(", ") %></td>
+              <td class="px-3 py-2 font-mono break-all"><%= acceptance.content_hash %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-gray-500">No one has accepted this version yet.</p>
+  <% end %>
 </div>

@@ -104,6 +104,17 @@ class AgreementEngine::Admin::IssuesTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{agreement_engine.new_admin_issue_path}']", text: "Issue a version"
   end
 
+  test "an admin viewing an issued version sees the acceptances recorded against it" do
+    sign_in(@admin)
+    issued = AgreementEngine::Document.issue!(type: :terms_of_service, page_version: @page.live_version, version: "2.0", effective_at: 1.day.ago)
+    signer = User.create!(name: "Pat Lee", email: "pat@example.com")
+    AgreementEngine::Acceptance.create!(signer: signer, person: {"name" => "Pat Lee", "email" => "pat@example.com"}, document: issued, accepted_at: 1.hour.ago, ip_address: "203.0.113.9")
+
+    get agreement_engine.admin_document_path(issued)
+
+    assert_select "td", text: "203.0.113.9"
+  end
+
   private
 
   def document_with_heading(text)

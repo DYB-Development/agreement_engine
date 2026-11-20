@@ -5,6 +5,8 @@ module AgreementEngine
     extend ActiveSupport::Concern
 
     included do
+      has_many :agreement_engine_acceptances, -> { order(:accepted_at, :id) }, as: :signer, class_name: "AgreementEngine::Acceptance"
+
       AgreementEngine.config.agreements.each do |agreement|
         belongs_to :"accepted_#{agreement.document_type}_version",
           class_name: "AgreementEngine::Document",
@@ -12,12 +14,21 @@ module AgreementEngine
       end
     end
 
+    def accepted_versions(document_type)
+      agreement_engine_acceptances.includes(:document).map(&:document).select { |document| document.document_type == document_type.to_s }
+    end
+
+    def accepted_current?(document_type)
+      current = AgreementEngine::Document.current(document_type)
+      current.nil? || agreement_engine_acceptances.exists?(document: current)
+    end
+
     def needs_acceptance?(agreement)
       agreement.not_accepted_by?(self)
     end
 
-    def accept_version!(agreement, version)
-      update!(agreement.version_column => version.id)
+    def accept_version!(_agreement, version)
+      AgreementEngine::Acceptance.create!(signer: self, person: AgreementEngine::Acceptance.person_snapshot(self), document: version, content_hash: version.content_hash, byte_form_version: version.byte_form_version, accepted_at: Time.current)
     end
   end
 end

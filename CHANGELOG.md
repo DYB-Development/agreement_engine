@@ -11,6 +11,13 @@ All notable changes to this project will be documented in this file.
 - Issued versions refuse edits and deletion
 - A List element, bulleted or numbered, in the keystone_ui-pages builder
 - A runtime dependency on keystone_ui-pages
+- Acceptance records that keep the evidence of each acceptance and cannot be changed or deleted
+- An evidence hook through which a host supplies the account, further person details and how the session signed in
+- `accepted_current?` and `accepted_versions` on the signer
+
+### Changed
+
+- Whether a person has accepted is read from acceptance records, and accepting no longer writes the user's version columns
 
 ## [0.1.0] - 2026-02-12
 
