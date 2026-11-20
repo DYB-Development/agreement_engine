@@ -15,10 +15,13 @@ module AgreementEngine
     attr_accessor :may_sign_method
     attr_accessor :return_check_method
     attr_accessor :acceptance_handler
+    attr_accessor :copy_email_types
+    attr_accessor :mailer_from
 
     def initialize
       @agreements = []
       @document_types = []
+      @copy_email_types = []
 
       @current_user_method = ->(c) { c.current_user }
       @signed_in_method = ->(c) { c.user_signed_in? }

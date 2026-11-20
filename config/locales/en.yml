@@ -33,3 +33,7 @@ en:
         accept: "I Accept"
       update:
         accepted: "You accepted the %{document}."
+    receipt_mailer:
+      copy:
+        subject: "Your copy of the %{document}"
+        body: "Attached are your copy of the %{document} and the byte-form file its SHA-256 hash was taken from. Running any SHA-256 tool on that file prints the hash below."

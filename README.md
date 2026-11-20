@@ -195,6 +195,28 @@ return address is followed only when it is a path on the host's own site that
 the return check allows. Record documents never trigger the accept redirect and
 never appear on the public pages.
 
+## The signer's copy
+
+A person can download a copy of any of their own acceptances:
+
+- `agreement_engine.receipt_path(acceptance, format: :pdf)` is the issued version
+  drawn with the values it was issued with, followed by the hash, the time, the
+  typed name and the gem versions.
+- `agreement_engine.byte_form_receipt_path(acceptance)` is the byte-form file the
+  hash was taken from, so `shasum -a 256` on it prints the recorded hash.
+
+A host emails the copy for chosen types:
+
+```ruby
+AgreementEngine.configure do |config|
+  config.copy_email_types = [:plan_sign_off]
+  config.mailer_from = "agreements@example.com"
+end
+```
+
+The PDF is drawn by keystone_ui-pages, so the host needs Propshaft and a
+compiled stylesheet holding the keystone_ui tokens.
+
 ## Being told about acceptances
 
 A host sets one handler, which is called once each acceptance or signature is
@@ -243,6 +265,8 @@ The engine provides:
 - `DELETE /consent` - Withdraw consent
 - `GET /signatures/:document_type` - Signing page for a signature-strength type
 - `PATCH /signatures/:document_type` - Sign it
+- `GET /receipts/:id.pdf` - A person's PDF copy of their acceptance
+- `GET /receipts/:id/byte_form` - The byte-form file its hash was taken from
 - `GET /records/:code` - Accept or sign one record's document
 - `PATCH /records/:code` - Accept or sign it
 
