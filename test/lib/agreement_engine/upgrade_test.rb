@@ -14,4 +14,12 @@ class AgreementEngine::UpgradeTest < ActiveSupport::TestCase
     assert_equal({"terms_of_service" => [1, 2], "privacy_policy" => [1]},
       KeystoneUi::Pages::Page.all.to_h { |page| [page.slug.delete_prefix("agreement-").tr("-", "_"), page.versions.map(&:number)] })
   end
+
+  test "the upgrade lists each version holding content it could not carry over" do
+    AgreementEngine::Document.create!(document_type: "privacy_policy", version: "2.0", content: "<div>Intro</div><table><tr><td>Cell</td></tr></table>", effective_at: 1.hour.ago)
+
+    report = AgreementEngine::Upgrade.run
+
+    assert_equal [["privacy_policy", "2.0", ["table"]]], report.left_out
+  end
 end
