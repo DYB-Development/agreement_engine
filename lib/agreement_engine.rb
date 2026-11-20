@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "agreement_engine/version"
+require "keystone_ui/pages"
 require_relative "agreement_engine/configuration"
 require_relative "agreement_engine/agreement"
 require_relative "agreement_engine/document_type"

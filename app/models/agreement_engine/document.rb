@@ -8,10 +8,25 @@ module AgreementEngine
 
     validates :document_type, presence: true
     validates :version, presence: true, uniqueness: {scope: :document_type}
-    validates :content, presence: true
+    validates :content, presence: true, unless: :content_hash
 
     scope :published, -> { where("effective_at <= ?", Time.current) }
     scope :draft, -> { where(effective_at: nil) }
+
+    belongs_to :page_version, class_name: "KeystoneUi::Pages::Version", optional: true
+
+    def self.issue!(type:, page_version:, version:, effective_at:)
+      frozen_copy = {"slug" => page_version.page.slug, "number" => page_version.number, "document" => page_version.document, "values" => {}}
+      create!(
+        document_type: type.to_s,
+        version: version,
+        effective_at: effective_at,
+        page_version: page_version,
+        frozen_copy: frozen_copy,
+        byte_form_version: ByteForm::VERSION,
+        content_hash: ByteForm.digest(slug: frozen_copy["slug"], number: frozen_copy["number"], document: frozen_copy["document"])
+      )
+    end
 
     def self.current(document_type)
       where(document_type: document_type)

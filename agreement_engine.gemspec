@@ -30,5 +30,6 @@ Gem::Specification.new do |spec|
   # every read of a json column raises until Rails ships a release that calls
   # the new interface.
   spec.add_dependency "json", "< 3"
+  spec.add_dependency "keystone_ui-pages", ">= 0.15"
   spec.add_dependency "rails", ">= 7.1"
 end
