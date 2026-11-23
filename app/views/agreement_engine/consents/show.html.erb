@@ -7,7 +7,9 @@
     <% if AgreementEngine.config.current_user(controller).held_consent %>
       <p><%= t(".held") %></p>
       <div class="mt-4 flex items-center justify-center gap-2">
-        <%= button_to t(".withdraw"), agreement_engine.consent_path, method: :delete, class: "btn btn-secondary btn-large" %>
+        <%= ui_form(action: agreement_engine.consent_path, method: :delete) do %>
+          <%= ui_button(label: t(".withdraw"), variant: :secondary) %>
+        <% end %>
       </div>
     <% else %>
       <%= ui_paragraph(text: t(".statement")) %>
