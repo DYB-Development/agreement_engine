@@ -78,4 +78,10 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select ".ks-heading-lg", text: "Statement of Work"
   end
+
+  test "the signing page's statement is a keystone_ui paragraph" do
+    get agreement_engine.signature_path(:statement_of_work)
+
+    assert_select "p.ks-paragraph", text: /you sign the Statement of Work above electronically/
+  end
 end

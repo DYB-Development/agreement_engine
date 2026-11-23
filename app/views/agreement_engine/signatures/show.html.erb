@@ -15,7 +15,7 @@
         <% end %>
 
         <% if @type.signature? %>
-          <p><%= t("agreement_engine.signatures.show.statement", document: @type.title) %></p>
+          <%= ui_paragraph(text: t("agreement_engine.signatures.show.statement", document: @type.title)) %>
 
           <%= ui_form_field(attribute: "signature[typed_name]", label: t("agreement_engine.signatures.show.typed_name"), value: params.dig(:signature, :typed_name), autocomplete: "name") %>
 
@@ -23,7 +23,7 @@
             <%= ui_button(label: t("agreement_engine.signatures.show.sign"), data: {reading_hold_target: "button"}) %>
           </div>
         <% else %>
-          <p><%= t("agreement_engine.record_documents.show.statement", document: @type.title) %></p>
+          <%= ui_paragraph(text: t("agreement_engine.record_documents.show.statement", document: @type.title)) %>
 
           <div>
             <%= ui_button(label: t("agreement_engine.record_documents.show.accept"), data: {reading_hold_target: "button"}) %>
