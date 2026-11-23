@@ -37,4 +37,10 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
 
     assert_equal "Document type nda has an unknown reading setting: secs.", error.message
   end
+
+  test "a minimum reading time of zero seconds is refused with a message naming the type" do
+    error = assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {seconds: 0}) }
+
+    assert_equal "Document type nda needs its minimum reading time as a positive whole number of seconds.", error.message
+  end
 end
