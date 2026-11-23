@@ -2,6 +2,8 @@
 
 module AgreementEngine
   class SignaturesController < ::ApplicationController
+    include AgreementEngine::ReadingCheck
+
     skip_before_action :require_accepted_agreements!, raise: false
     before_action :require_signed_in
     before_action :set_type_and_version
@@ -46,40 +48,8 @@ module AgreementEngine
 
     private
 
-    def record_served
-      served = session[:agreement_engine_served] ||= {}
-      served[@version.id.to_s] ||= Time.current.to_i
-    end
-
-    def too_soon?
-      minimum = @type.minimum_reading_seconds
-      return false if minimum.zero?
-
-      served_at.nil? || Time.current.to_i - served_at < minimum
-    end
-
-    def reading_evidence
-      evidence = {}
-      minimum = @type.minimum_reading_seconds
-      evidence.merge!(minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at) unless minimum.zero?
-      evidence.merge!(scroll: scroll_report) if @type.requires_scroll?
-      evidence.presence
-    end
-
-    def scroll_report
-      report = params[:reading]
-      return {reported_by: nil} unless report
-
-      {reported_by: "browser", end_reached: report[:end_reached] == "true", end_in_view_on_load: report[:end_in_view_on_load] == "true"}
-    end
-
-    def elapsed_reading_seconds
-      served_at ? Time.current.to_i - served_at : 0
-    end
-    helper_method :elapsed_reading_seconds
-
-    def served_at
-      session.dig(:agreement_engine_served, @version.id.to_s)
+    def reading_type
+      @type
     end
 
     def already_signed?
