@@ -51,4 +51,18 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-controller=reading-hold][data-reading-hold-seconds-value='30'] button[data-reading-hold-target=button]", text: "Sign"
   end
+
+  test "after a signature is refused because the document changed, the reading time starts again for the new version" do
+    freeze_time
+    get agreement_engine.signature_path(:statement_of_work)
+    travel 60.seconds
+    page = KeystoneUi::Pages::Page.create!(name: "SOW 2", slug: "sow-2", document: KeystoneUi::Pages::Document.blank)
+    page.publish
+    sow_v2 = AgreementEngine::Document.issue!(type: :statement_of_work, page_version: page.live_version, version: "2.0", effective_at: Time.current)
+    sign
+    travel 30.seconds
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: sow_v2.content_hash}}
+
+    assert AgreementEngine::Acceptance.exists?(signer: @user, document: sow_v2)
+  end
 end

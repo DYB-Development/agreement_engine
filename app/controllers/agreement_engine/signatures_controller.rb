@@ -17,6 +17,7 @@ module AgreementEngine
       if stale?
         @error = t("agreement_engine.signatures.update.stale")
         @version = current_version
+        record_served
         render :show, status: :conflict
       elsif too_soon?
         @error = t("agreement_engine.signatures.update.too_soon", document: @type.title, seconds: @type.minimum_reading_seconds)
