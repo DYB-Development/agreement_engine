@@ -2,18 +2,9 @@
 
 module AgreementEngine
   DocumentType = Data.define(:key, :title, :kind, :strength, :template, :prompts, :reading) do
-    reading_settings = %i[seconds open]
-
-    define_method(:initialize) do |key:, title:, kind:, strength:, template: nil, prompts: false, reading: nil|
-      unknown = reading.to_h.keys - reading_settings
-      raise ArgumentError, "Document type #{key} has an unknown reading setting: #{unknown.join(", ")}." if unknown.any?
-
-      raise ArgumentError, "Document type #{key} cannot require opening, because per-record documents have no public page." if reading.to_h[:open] && kind.to_sym == :per_record
-
-      seconds = reading.to_h[:seconds]
-      raise ArgumentError, "Document type #{key} needs its minimum reading time as a positive whole number of seconds." unless seconds.nil? || (seconds.is_a?(Integer) && seconds.positive?)
-
-      super(key:, title:, kind:, strength:, template:, prompts:, reading:)
+    def initialize(key:, title:, kind:, strength:, template: nil, prompts: false, reading: nil)
+      check_reading(key, kind, reading.to_h)
+      super
     end
 
     def signature?
@@ -37,5 +28,16 @@ module AgreementEngine
     end
 
     def to_param = key.to_s
+
+    private
+
+    def check_reading(key, kind, reading)
+      unknown = reading.keys - %i[seconds open]
+      raise ArgumentError, "Document type #{key} has an unknown reading setting: #{unknown.join(", ")}." if unknown.any?
+      raise ArgumentError, "Document type #{key} cannot require opening, because per-record documents have no public page." if reading[:open] && kind.to_sym == :per_record
+
+      seconds = reading[:seconds]
+      raise ArgumentError, "Document type #{key} needs its minimum reading time as a positive whole number of seconds." unless seconds.nil? || (seconds.is_a?(Integer) && seconds.positive?)
+    end
   end
 end
