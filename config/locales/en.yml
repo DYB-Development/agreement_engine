@@ -41,6 +41,7 @@ en:
         accept: "I Accept"
       update:
         accepted: "You accepted the %{document}."
+        too_soon: "Read the %{document} for at least %{seconds} seconds before accepting."
     receipt_mailer:
       copy:
         subject: "Your copy of the %{document}"

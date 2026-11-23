@@ -5,6 +5,11 @@ module AgreementEngine
     def update
       return super if @type.signature?
 
+      if too_soon?
+        @error = t("agreement_engine.record_documents.update.too_soon", document: @type.title, seconds: @type.minimum_reading_seconds)
+        return render(:show, status: :unprocessable_entity)
+      end
+
       AgreementEngine::Acceptance.record!(
         signer: signer,
         document: @version,
