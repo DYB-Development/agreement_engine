@@ -25,6 +25,12 @@ class AgreementEngine::HostNotificationTest < ActiveSupport::TestCase
     assert_equal [:terms_of_service, @terms, {"name" => "Pat Lee"}, {"name" => "Acme"}, :click_accept, nil], [event.document_type, event.document, event.person, event.account, event.strength, event.subject]
   end
 
+  test "the handler is told the reading evidence kept with the acceptance" do
+    AgreementEngine::Acceptance.create!(signer: @user, document: @terms, accepted_at: Time.current, reading: {"minimum_seconds" => 30, "measured_seconds" => 42})
+
+    assert_equal({"minimum_seconds" => 30, "measured_seconds" => 42}, @told.last.reading)
+  end
+
   test "the handler is told when a signature is the first one on a record's document" do
     record_document = AgreementEngine::Document.create!(document_type: "plan_sign_off", version: "1", content: "Plan", effective_at: Time.current, subject: @user)
 
