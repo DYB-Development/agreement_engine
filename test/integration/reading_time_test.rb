@@ -82,4 +82,12 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-controller=reading-hold][data-reading-hold-seconds-value='30'] button[data-reading-hold-target=button]", text: "I Accept"
   end
+
+  test "the hold counts from when the server first served the accept page" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 12.seconds
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold][data-reading-hold-elapsed-value='12']"
+  end
 end
