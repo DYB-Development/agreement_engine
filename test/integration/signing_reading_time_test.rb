@@ -45,4 +45,10 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_equal({"reported_by" => "browser", "end_reached" => true, "end_in_view_on_load" => true}, AgreementEngine::Acceptance.find_by(signer: @user, document: @sow).reading["scroll"])
   end
+
+  test "the signing page holds the sign button for the minimum reading time" do
+    get agreement_engine.signature_path(:statement_of_work)
+
+    assert_select "[data-controller=reading-hold][data-reading-hold-seconds-value='30'] button[data-reading-hold-target=button]", text: "Sign"
+  end
 end

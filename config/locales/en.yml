@@ -28,6 +28,8 @@ en:
         statement: "By typing your full name and selecting Sign, you sign the %{document} above electronically, and your electronic signature has the same effect as a handwritten one."
         typed_name: "Your full name"
         sign: "Sign"
+        waiting: "You can sign in {seconds} seconds."
+        ready: "You can now sign."
       update:
         blank: "Type your full name to sign."
         stale: "This document changed while you were reading it. Read the current version below and sign again."
