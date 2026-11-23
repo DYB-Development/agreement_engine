@@ -118,4 +118,13 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-controller=reading-hold][data-reading-hold-require-end-value=true][data-reading-hold-seconds-value='30']"
   end
+
+  test "the acceptance keeps the browser's report of reaching the end, marked as reported by the browser" do
+    AgreementEngine.config.document_types = [AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true, reading: {scroll: true})]
+    get agreement_engine.agreement_path(:terms_of_service)
+    patch agreement_engine.agreement_path(:terms_of_service), params: {reading: {end_reached: "true", end_in_view_on_load: "false"}}
+
+    assert_equal({"reported_by" => "browser", "end_reached" => true, "end_in_view_on_load" => false},
+      AgreementEngine::Acceptance.find_by(signer: @user, document: @terms).reading["scroll"])
+  end
 end
