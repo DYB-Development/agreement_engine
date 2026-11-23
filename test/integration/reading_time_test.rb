@@ -90,4 +90,10 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-controller=reading-hold][data-reading-hold-elapsed-value='12']"
   end
+
+  test "the accept button is sent available, so without JavaScript it can still be pressed" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "button[data-reading-hold-target=button]:not([disabled]):not([aria-disabled])", text: "I Accept"
+  end
 end
