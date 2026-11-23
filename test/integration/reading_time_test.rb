@@ -42,4 +42,14 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
   end
+
+  test "reloading the accept page does not restart the time already counted" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 20.seconds
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 10.seconds
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
+  end
 end
