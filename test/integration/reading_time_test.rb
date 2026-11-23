@@ -52,4 +52,13 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
   end
+
+  test "time spent on an earlier version does not count toward a newly issued version" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 60.seconds
+    terms_v2 = AgreementEngine::Document.create!(document_type: "terms_of_service", version: "2.0", content: "Terms v2 content", effective_at: Time.current)
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: terms_v2)
+  end
 end
