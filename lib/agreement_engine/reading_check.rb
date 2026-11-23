@@ -24,6 +24,10 @@ module AgreementEngine
       served_at.nil? || Time.current.to_i - served_at < minimum
     end
 
+    def too_soon_reason(doing)
+      I18n.t("agreement_engine.reading.too_soon.#{doing}", document: reading_type.title, seconds: reading_type.minimum_reading_seconds)
+    end
+
     def reading_evidence
       evidence = {}
       minimum = reading_type.minimum_reading_seconds

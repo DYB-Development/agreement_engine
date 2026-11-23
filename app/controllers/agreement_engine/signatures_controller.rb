@@ -22,7 +22,7 @@ module AgreementEngine
         record_served
         render :show, status: :conflict
       elsif too_soon?
-        @error = t("agreement_engine.signatures.update.too_soon", document: @type.title, seconds: @type.minimum_reading_seconds)
+        @error = too_soon_reason(:signing)
         render :show, status: :unprocessable_entity
       elsif already_signed?
         redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
