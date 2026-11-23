@@ -27,7 +27,7 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
     get agreement_engine.signature_path(:statement_of_work)
     sign
 
-    assert_includes response.body, "Read the Statement of Work for at least 30 seconds before signing."
+    assert_select ".ks-alert-error", text: "Read the Statement of Work for at least 30 seconds before signing."
   end
 
   test "a signature keeps the minimum time that applied and the seconds the server measured" do

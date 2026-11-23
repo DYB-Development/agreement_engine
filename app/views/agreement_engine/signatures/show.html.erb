@@ -11,7 +11,7 @@
         <%= form.hidden_field :content_hash, value: @version.content_hash %>
 
         <% if @error %>
-          <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
+          <%= ui_alert(message: @error, type: :error) %>
         <% end %>
 
         <% if @type.signature? %>
