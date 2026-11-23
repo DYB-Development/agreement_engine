@@ -24,4 +24,10 @@ class AcceptPageTest < ActionDispatch::IntegrationTest
 
     assert_select "p.ks-paragraph", text: "Before you can proceed, you must read and accept the new Terms Of Service."
   end
+
+  test "the accept page's decline button is a keystone_ui button" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "button.ks-button-secondary", text: "I Decline"
+  end
 end

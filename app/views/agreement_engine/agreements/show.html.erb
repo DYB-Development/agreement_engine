@@ -29,7 +29,9 @@
     <%= ui_paragraph(text: t(".description", agreement: @agreement.title)) %>
 
     <div class="mt-4 flex items-center justify-center gap-2">
-      <%= button_to t(".decline"), agreement_engine.agreement_path(@agreement), method: :delete, class: "btn btn-secondary btn-large" %>
+      <%= ui_form(action: agreement_engine.agreement_path(@agreement), method: :delete) do %>
+        <%= ui_button(label: t(".decline"), variant: :secondary) %>
+      <% end %>
     </div>
   </div>
 </div>
