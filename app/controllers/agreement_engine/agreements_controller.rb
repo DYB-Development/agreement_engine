@@ -7,7 +7,7 @@ module AgreementEngine
     before_action :set_agreement
     before_action :set_version
 
-    layout "agreement_engine/minimal"
+    layout -> { AgreementEngine.config.layout }
 
     def show
       record_served
