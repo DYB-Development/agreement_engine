@@ -23,7 +23,7 @@ module AgreementEngine
       opened_at = version && session.dig(:agreement_engine_opened, version.id.to_s)
       return unless opened_at
 
-      {opened_on: "public_page", opened_at: Time.zone.at(opened_at).iso8601}
+      {opened_on: "public_page", opened_at: Time.zone.at(opened_at).iso8601, version_id: version.id}
     end
   end
 end

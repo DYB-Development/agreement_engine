@@ -12,6 +12,13 @@ class OpenedDocumentsTest < ActionDispatch::IntegrationTest
     assert_equal "public_page", response.parsed_body["opened_on"]
   end
 
+  test "host code sees which version the session opened" do
+    get agreement_engine.terms_path
+    get opened_check_path(:terms_of_service)
+
+    assert_equal @terms.id, response.parsed_body["version_id"]
+  end
+
   test "host code sees no opening when the session never opened the public page" do
     get opened_check_path(:terms_of_service)
 
