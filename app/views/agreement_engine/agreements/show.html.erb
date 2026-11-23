@@ -26,9 +26,7 @@
       <div class="mb-4 bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
     <% end %>
 
-    <div class="text-center">
-      <%= t(".description", agreement: @agreement.title) %>
-    </div>
+    <%= ui_paragraph(text: t(".description", agreement: @agreement.title)) %>
 
     <div class="mt-4 flex items-center justify-center gap-2">
       <%= button_to t(".decline"), agreement_engine.agreement_path(@agreement), method: :delete, class: "btn btn-secondary btn-large" %>

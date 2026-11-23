@@ -18,4 +18,10 @@ class AcceptPageTest < ActionDispatch::IntegrationTest
 
     assert_select ".ks-caption", text: "Last updated #{I18n.l(@terms.effective_at.to_date, format: :long)}"
   end
+
+  test "the accept page's statement is a keystone_ui paragraph" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "p.ks-paragraph", text: "Before you can proceed, you must read and accept the new Terms Of Service."
+  end
 end
