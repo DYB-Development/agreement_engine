@@ -83,6 +83,8 @@ module AgreementEngine
 
     def scroll_report
       report = params[:reading]
+      return {reported_by: nil} unless report
+
       {reported_by: "browser", end_reached: report[:end_reached] == "true", end_in_view_on_load: report[:end_in_view_on_load] == "true"}
     end
 

@@ -127,4 +127,12 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
     assert_equal({"reported_by" => "browser", "end_reached" => true, "end_in_view_on_load" => false},
       AgreementEngine::Acceptance.find_by(signer: @user, document: @terms).reading["scroll"])
   end
+
+  test "an acceptance sent with no scroll report is recorded with the scroll marked as not reported" do
+    AgreementEngine.config.document_types = [AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true, reading: {scroll: true})]
+    get agreement_engine.agreement_path(:terms_of_service)
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_equal({"reported_by" => nil}, AgreementEngine::Acceptance.find_by(signer: @user, document: @terms).reading["scroll"])
+  end
 end
