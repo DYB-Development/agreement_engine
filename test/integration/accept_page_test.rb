@@ -12,4 +12,10 @@ class AcceptPageTest < ActionDispatch::IntegrationTest
 
     assert_select ".ks-heading-lg", text: "Terms Of Service Changed"
   end
+
+  test "the accept page's last updated date is a keystone_ui caption" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select ".ks-caption", text: "Last updated #{I18n.l(@terms.effective_at.to_date, format: :long)}"
+  end
 end

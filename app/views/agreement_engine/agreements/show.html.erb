@@ -2,7 +2,7 @@
   <%= ui_heading(text: t(".title", agreement: @agreement.title), size: :lg) %>
 
   <% if @version %>
-    <%= tag.p t(".last_updated", date: l(@version.effective_at.to_date, format: :long)), class: "mb-4 text-gray-700 leading-normal italic" %>
+    <%= ui_caption(text: t(".last_updated", date: l(@version.effective_at.to_date, format: :long)), normal_case: true) %>
 
     <% if (period = AgreementEngine::Period.describe(@version.frozen_copy.to_h["period"])) %>
       <p class="mb-4 font-medium">Period: <%= period %></p>
