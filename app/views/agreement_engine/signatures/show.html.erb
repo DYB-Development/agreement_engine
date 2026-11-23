@@ -17,10 +17,7 @@
         <% if @type.signature? %>
           <p><%= t("agreement_engine.signatures.show.statement", document: @type.title) %></p>
 
-          <div>
-            <%= form.label :typed_name, t("agreement_engine.signatures.show.typed_name"), class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_field :typed_name, autocomplete: "name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
-          </div>
+          <%= ui_form_field(attribute: "signature[typed_name]", label: t("agreement_engine.signatures.show.typed_name"), value: params.dig(:signature, :typed_name), autocomplete: "name") %>
 
           <div>
             <%= ui_button(label: t("agreement_engine.signatures.show.sign"), data: {reading_hold_target: "button"}) %>

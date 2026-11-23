@@ -65,4 +65,11 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert AgreementEngine::Acceptance.exists?(signer: @user, document: sow_v2)
   end
+
+  test "a refused signature keeps the typed name in its field" do
+    get agreement_engine.signature_path(:statement_of_work)
+    sign
+
+    assert_select "input[name='signature[typed_name]'][value='Pat Lee']"
+  end
 end
