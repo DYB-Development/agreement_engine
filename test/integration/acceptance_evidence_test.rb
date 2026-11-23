@@ -41,8 +41,9 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
   end
 
   test "accepting records the time of acceptance" do
-    travel_to Time.utc(2026, 11, 20, 15, 30) do
-      assert_equal Time.utc(2026, 11, 20, 15, 30), accept_terms.accepted_at
+    accepted = @terms.effective_at.change(usec: 0) + 1.hour
+    travel_to accepted do
+      assert_equal accepted, accept_terms.accepted_at
     end
   end
 
