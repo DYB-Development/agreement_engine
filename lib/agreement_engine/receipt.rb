@@ -23,8 +23,33 @@ module AgreementEngine
         "Accepted: #{acceptance.accepted_at.utc.strftime("%Y-%m-%d %H:%M:%S UTC")}",
         ("Typed name: #{acceptance.typed_name}" if acceptance.typed_name.present?),
         period_line(acceptance),
+        reading_time_line(acceptance.reading.to_h),
+        scroll_line(acceptance.reading.to_h["scroll"]),
+        opened_line(acceptance.reading.to_h),
         "agreement_engine #{acceptance.engine_version}, keystone_ui-pages #{acceptance.pages_version}"
       ].compact
+    end
+
+    def reading_time_line(reading)
+      return unless reading["minimum_seconds"]
+
+      "Reading time: #{reading["minimum_seconds"]} seconds required, #{reading["measured_seconds"]} seconds measured by the server"
+    end
+
+    def scroll_line(scroll)
+      return unless scroll
+      return "End of the document: not reported by the browser" unless scroll["reported_by"]
+
+      reached = scroll["end_reached"] ? "reached" : "not reached"
+      on_load = scroll["end_in_view_on_load"] ? "in view when first shown" : "not in view when first shown"
+      "End of the document: #{reached}, #{on_load}, as reported by the browser"
+    end
+
+    def opened_line(reading)
+      return unless reading["opened_on"]
+
+      at = Time.iso8601(reading["opened_at"]).utc.strftime("%Y-%m-%d %H:%M:%S UTC")
+      "Opened: on the #{reading["opened_on"].tr("_", " ")}, #{at}, as recorded by the server"
     end
 
     def period_line(acceptance)

@@ -15,6 +15,7 @@ module AgreementEngine
     def document_type = document.document_type.to_sym
     def person = acceptance.person
     def account = acceptance.account
+    def reading = acceptance.reading
     def strength = acceptance.strength.to_sym
     def subject = document.subject
     def first_signature? = first_signature
