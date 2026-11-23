@@ -33,4 +33,14 @@ class HostLayoutTest < ActionDispatch::IntegrationTest
   ensure
     AgreementEngine.config.layout = "application"
   end
+
+  test "a host that names the gem's minimal layout sees the pages without its own layout" do
+    AgreementEngine.config.layout = "agreement_engine/minimal"
+
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "body[data-layout]", 0
+  ensure
+    AgreementEngine.config.layout = "application"
+  end
 end
