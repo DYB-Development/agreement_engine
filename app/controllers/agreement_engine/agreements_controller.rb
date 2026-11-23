@@ -10,9 +10,12 @@ module AgreementEngine
     layout "agreement_engine/minimal"
 
     def show
+      record_served
     end
 
     def update
+      return render(:show, status: :unprocessable_entity) if @version && too_soon?
+
       if @version
         AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request, statement: t("agreement_engine.agreements.show.description", agreement: @agreement.title), button_text: t("agreement_engine.agreements.show.accept"), evidence: AgreementEngine.config.evidence(self, agreement_engine_current_user))
       end
@@ -48,6 +51,24 @@ module AgreementEngine
 
     def set_version
       @version = @agreement && AgreementEngine::Document.current(@agreement.key)
+    end
+
+    def record_served
+      return unless @version
+
+      served = session[:agreement_engine_served] ||= {}
+      served[@version.id.to_s] ||= Time.current.to_i
+    end
+
+    def too_soon?
+      minimum = @agreement.minimum_reading_seconds
+      return false if minimum.zero?
+
+      Time.current.to_i - served_at < minimum
+    end
+
+    def served_at
+      session.dig(:agreement_engine_served, @version.id.to_s).to_i
     end
 
     def after_accepted_path

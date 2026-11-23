@@ -1,0 +1,24 @@
+require "test_helper"
+
+class ReadingTimeTest < ActionDispatch::IntegrationTest
+  setup do
+    @registered = AgreementEngine.config.document_types
+    AgreementEngine.config.document_types = [
+      AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true, reading: {seconds: 30})
+    ]
+    @terms = AgreementEngine::Document.create!(document_type: "terms_of_service", version: "1.0", content: "Terms content", effective_at: 2.days.ago)
+    @user = User.create!(name: "Test User", email: "test@example.com")
+    sign_in @user
+  end
+
+  teardown do
+    AgreementEngine.config.document_types = @registered
+  end
+
+  test "an acceptance sent sooner than the minimum time is not recorded" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
+  end
+end
