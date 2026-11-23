@@ -14,7 +14,7 @@ module AgreementEngine
     end
 
     def update
-      return render(:show, status: :unprocessable_entity) if @version && too_soon?
+      return refuse(t(".too_soon", agreement: @agreement.title, seconds: @agreement.minimum_reading_seconds)) if @version && too_soon?
 
       if @version
         AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request, statement: t("agreement_engine.agreements.show.description", agreement: @agreement.title), button_text: t("agreement_engine.agreements.show.accept"), evidence: AgreementEngine.config.evidence(self, agreement_engine_current_user))
@@ -51,6 +51,11 @@ module AgreementEngine
 
     def set_version
       @version = @agreement && AgreementEngine::Document.current(@agreement.key)
+    end
+
+    def refuse(reason)
+      @error = reason
+      render :show, status: :unprocessable_entity
     end
 
     def record_served

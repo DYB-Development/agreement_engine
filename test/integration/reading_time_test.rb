@@ -21,4 +21,11 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
   end
+
+  test "an early acceptance shows the accept page again with the reason" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_includes response.body, "Read the Terms Of Service for at least 30 seconds before accepting."
+  end
 end
