@@ -95,6 +95,17 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Read the Quote for at least 30 seconds before accepting."
   end
 
+  test "a record document accepted after its minimum reading time keeps the reading time" do
+    AgreementEngine.config.document_types = AgreementEngine.config.document_types.map { |type| (type.key == :quote) ? type.with(reading: {seconds: 30}) : type }
+    quote = AgreementEngine.issue_for!(:quote, @client)
+
+    get agreement_engine.record_document_path(quote)
+    travel 30.seconds
+    patch agreement_engine.record_document_path(quote)
+
+    assert_equal({"minimum_seconds" => 30, "measured_seconds" => 30}, quote.acceptances.last&.reading)
+  end
+
   test "host code asks who has signed a record's current document" do
     patch agreement_engine.record_document_path(@plan_document), params: {signature: {typed_name: "Acme Co", content_hash: @plan_document.content_hash}}
 

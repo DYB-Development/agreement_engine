@@ -16,7 +16,8 @@ module AgreementEngine
         request: request,
         statement: t("agreement_engine.record_documents.show.statement", document: @type.title),
         button_text: t("agreement_engine.record_documents.show.accept"),
-        evidence: AgreementEngine.config.evidence(self, signer)
+        evidence: AgreementEngine.config.evidence(self, signer),
+        reading: reading_evidence
       )
       redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.record_documents.update.accepted", document: @type.title)
     end
