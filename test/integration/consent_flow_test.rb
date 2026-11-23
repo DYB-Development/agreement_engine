@@ -28,4 +28,10 @@ class ConsentFlowTest < ActionDispatch::IntegrationTest
 
     assert_equal [consent.id, Time.utc(2026, 12, 1, 9, 0)], AgreementEngine::ConsentWithdrawal.last.then { |withdrawal| [withdrawal.acceptance_id, withdrawal.withdrawn_at] }
   end
+
+  test "the consent page's consent button is a keystone_ui button" do
+    get agreement_engine.consent_path
+
+    assert_select "button.ks-button", text: "I Consent"
+  end
 end

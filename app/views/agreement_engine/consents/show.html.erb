@@ -12,7 +12,9 @@
     <% else %>
       <p><%= t(".statement") %></p>
       <div class="mt-4 flex items-center justify-center gap-2">
-        <%= button_to t(".consent"), agreement_engine.consent_path, method: :post, class: "btn btn-primary btn-large" %>
+        <%= ui_form(action: agreement_engine.consent_path, method: :post) do %>
+          <%= ui_button(label: t(".consent")) %>
+        <% end %>
       </div>
     <% end %>
   </div>
