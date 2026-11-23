@@ -28,4 +28,10 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_includes response.body, "Read the Terms Of Service for at least 30 seconds before accepting."
   end
+
+  test "an acceptance sent when the accept page was never served is refused with the reason" do
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_includes response.body, "Read the Terms Of Service for at least 30 seconds before accepting."
+  end
 end

@@ -69,11 +69,11 @@ module AgreementEngine
       minimum = @agreement.minimum_reading_seconds
       return false if minimum.zero?
 
-      Time.current.to_i - served_at < minimum
+      served_at.nil? || Time.current.to_i - served_at < minimum
     end
 
     def served_at
-      session.dig(:agreement_engine_served, @version.id.to_s).to_i
+      session.dig(:agreement_engine_served, @version.id.to_s)
     end
 
     def after_accepted_path
