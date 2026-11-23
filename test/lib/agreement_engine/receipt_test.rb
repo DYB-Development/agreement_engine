@@ -37,4 +37,10 @@ class AgreementEngine::ReceiptTest < ActiveSupport::TestCase
 
     assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "End of the document: not reported by the browser"
   end
+
+  test "the copy lists where and when the document was opened, as recorded by the server" do
+    acceptance = acceptance_with_reading({"opened_on" => "public_page", "opened_at" => "2026-11-20T15:00:00Z", "version_id" => 1})
+
+    assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "Opened: on the public page, 2026-11-20 15:00:00 UTC, as recorded by the server"
+  end
 end
