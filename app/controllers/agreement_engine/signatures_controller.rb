@@ -10,6 +10,7 @@ module AgreementEngine
     layout -> { AgreementEngine.config.layout }
 
     def show
+      record_served
     end
 
     def update
@@ -17,6 +18,9 @@ module AgreementEngine
         @error = t("agreement_engine.signatures.update.stale")
         @version = current_version
         render :show, status: :conflict
+      elsif too_soon?
+        @error = t("agreement_engine.signatures.update.too_soon", document: @type.title, seconds: @type.minimum_reading_seconds)
+        render :show, status: :unprocessable_entity
       elsif already_signed?
         redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       elsif typed_name.blank?
@@ -39,6 +43,22 @@ module AgreementEngine
     end
 
     private
+
+    def record_served
+      served = session[:agreement_engine_served] ||= {}
+      served[@version.id.to_s] ||= Time.current.to_i
+    end
+
+    def too_soon?
+      minimum = @type.minimum_reading_seconds
+      return false if minimum.zero?
+
+      served_at.nil? || Time.current.to_i - served_at < minimum
+    end
+
+    def served_at
+      session.dig(:agreement_engine_served, @version.id.to_s)
+    end
 
     def already_signed?
       @version.acceptances.exists?(signer: signer, strength: "signature")

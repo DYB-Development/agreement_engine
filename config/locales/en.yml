@@ -31,6 +31,7 @@ en:
       update:
         blank: "Type your full name to sign."
         stale: "This document changed while you were reading it. Read the current version below and sign again."
+        too_soon: "Read the %{document} for at least %{seconds} seconds before signing."
         signed: "You signed the %{document}."
     record_documents:
       show:
