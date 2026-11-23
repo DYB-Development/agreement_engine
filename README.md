@@ -327,6 +327,22 @@ What the app gains: editing documents in the page builder, a hash on every
 issued version, a kept record of every acceptance with its evidence, consent to
 electronic records, signatures, documents for one record and the signer's copy.
 
+### The layout of the gem's pages
+
+The accept, consent, signing, record and verification pages render in the
+host's `application` layout, so they load the app's JavaScript and styles.
+Before this they rendered in the gem's own minimal layout, which loads neither.
+Name another of the app's layouts, or the minimal layout to keep the old look:
+
+```ruby
+AgreementEngine.configure do |config|
+  config.layout = "agreement_engine/minimal"
+end
+```
+
+An app that put its own copy of `layouts/agreement_engine/minimal` in its views
+to get its layout can delete that copy.
+
 ## Auth Configuration
 
 AgreementEngine defaults to Devise conventions. Override for other auth systems:
