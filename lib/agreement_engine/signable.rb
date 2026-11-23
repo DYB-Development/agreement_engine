@@ -33,6 +33,9 @@ module AgreementEngine
     end
 
     def accept_version!(version, reading: nil)
+      type = AgreementEngine.document_type(version.document_type)
+      raise ArgumentError, "Document type #{type.key} requires opening, and no opening of this version was passed." if type&.requires_opening? && reading.to_h.transform_keys(&:to_sym)[:version_id] != version.id
+
       AgreementEngine::Acceptance.create!(signer: self, person: AgreementEngine::Acceptance.person_snapshot(self), document: version, content_hash: version.content_hash, byte_form_version: version.byte_form_version, accepted_at: Time.current, reading: reading)
     end
   end
