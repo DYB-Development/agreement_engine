@@ -77,7 +77,15 @@ module AgreementEngine
       minimum = @agreement.minimum_reading_seconds
       evidence.merge!(minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at) unless minimum.zero?
       evidence.merge!(opened_on: "accept_page", opened_at: Time.zone.at(served_at).iso8601) if @agreement.requires_opening? && served_at
+      evidence.merge!(scroll: scroll_report) if @agreement.requires_scroll?
       evidence.presence
+    end
+
+    def scroll_report
+      report = params[:reading]
+      return {reported_by: nil} unless report
+
+      {reported_by: "browser", end_reached: report[:end_reached] == "true", end_in_view_on_load: report[:end_in_view_on_load] == "true"}
     end
 
     def elapsed_reading_seconds

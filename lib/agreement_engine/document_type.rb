@@ -27,12 +27,16 @@ module AgreementEngine
       reading.to_h[:open] == true
     end
 
+    def requires_scroll?
+      reading.to_h[:scroll] == true
+    end
+
     def to_param = key.to_s
 
     private
 
     def check_reading(key, kind, reading)
-      unknown = reading.keys - %i[seconds open]
+      unknown = reading.keys - %i[seconds open scroll]
       raise ArgumentError, "Document type #{key} has an unknown reading setting: #{unknown.join(", ")}." if unknown.any?
       raise ArgumentError, "Document type #{key} cannot require opening, because per-record documents have no public page." if reading[:open] && kind.to_sym == :per_record
 
