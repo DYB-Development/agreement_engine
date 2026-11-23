@@ -43,6 +43,17 @@ class AgreementEngine::UpgradeTest < ActiveSupport::TestCase
       AgreementEngine::Acceptance.order(:document_id).map { |acceptance| [acceptance.signer, acceptance.document, acceptance.carried_over] }
   end
 
+  test "the upgrade carries over acceptances of a type that requires opening" do
+    registered = AgreementEngine.config.document_types
+    AgreementEngine.config.document_types = registered.map { |type| type.key == :terms_of_service ? type.with(reading: {open: true}) : type }
+
+    AgreementEngine::Upgrade.run(signer_class: User)
+
+    assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms_v2)
+  ensure
+    AgreementEngine.config.document_types = registered
+  end
+
   test "a named time column gives each carried-over acceptance its time, marked as reported by the host" do
     @user.update_column(:updated_at, Time.utc(2026, 6, 1, 12, 0))
 
