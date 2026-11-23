@@ -40,6 +40,14 @@ class AgreementEngine::SignableTest < ActiveSupport::TestCase
     end
   end
 
+  test "accept_version! of a type requiring opening, with no opening passed, saves no acceptance" do
+    with_terms_requiring_opening do
+      assert_raises(ArgumentError) { @user.accept_version!(@terms_v1) }
+    end
+
+    assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: @terms_v1)
+  end
+
   private
 
   def with_terms_requiring_opening
