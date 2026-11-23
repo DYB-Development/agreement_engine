@@ -31,4 +31,10 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
 
     assert_equal "plan-sign-off", plan.template
   end
+
+  test "a reading requirement with an unknown setting is refused with a message naming the type and the setting" do
+    error = assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {secs: 30}) }
+
+    assert_equal "Document type nda has an unknown reading setting: secs.", error.message
+  end
 end

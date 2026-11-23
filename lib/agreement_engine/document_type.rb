@@ -2,8 +2,13 @@
 
 module AgreementEngine
   DocumentType = Data.define(:key, :title, :kind, :strength, :template, :prompts, :reading) do
-    def initialize(key:, title:, kind:, strength:, template: nil, prompts: false, reading: nil)
-      super
+    reading_settings = %i[seconds open]
+
+    define_method(:initialize) do |key:, title:, kind:, strength:, template: nil, prompts: false, reading: nil|
+      unknown = reading.to_h.keys - reading_settings
+      raise ArgumentError, "Document type #{key} has an unknown reading setting: #{unknown.join(", ")}." if unknown.any?
+
+      super(key:, title:, kind:, strength:, template:, prompts:, reading:)
     end
 
     def signature?
