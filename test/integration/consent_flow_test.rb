@@ -47,4 +47,11 @@ class ConsentFlowTest < ActionDispatch::IntegrationTest
 
     assert_select "button.ks-button-secondary", text: "Withdraw"
   end
+
+  test "a person who holds consent is told so in a keystone_ui paragraph" do
+    post agreement_engine.consent_path
+    get agreement_engine.consent_path
+
+    assert_select "article + div p.ks-paragraph", text: "You have consented to electronic records. You can withdraw that consent here."
+  end
 end

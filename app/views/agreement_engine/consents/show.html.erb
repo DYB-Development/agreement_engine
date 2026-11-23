@@ -5,7 +5,7 @@
 
   <div class="mt-8 sm:mt-16 text-center">
     <% if AgreementEngine.config.current_user(controller).held_consent %>
-      <p><%= t(".held") %></p>
+      <%= ui_paragraph(text: t(".held")) %>
       <div class="mt-4 flex items-center justify-center gap-2">
         <%= ui_form(action: agreement_engine.consent_path, method: :delete) do %>
           <%= ui_button(label: t(".withdraw"), variant: :secondary) %>
