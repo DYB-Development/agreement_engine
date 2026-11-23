@@ -17,7 +17,7 @@ module AgreementEngine
       return refuse(t(".too_soon", agreement: @agreement.title, seconds: @agreement.minimum_reading_seconds)) if @version && too_soon?
 
       if @version
-        AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request, statement: t("agreement_engine.agreements.show.description", agreement: @agreement.title), button_text: t("agreement_engine.agreements.show.accept"), evidence: AgreementEngine.config.evidence(self, agreement_engine_current_user))
+        AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request, statement: t("agreement_engine.agreements.show.description", agreement: @agreement.title), button_text: t("agreement_engine.agreements.show.accept"), evidence: AgreementEngine.config.evidence(self, agreement_engine_current_user), reading: reading_evidence)
       end
       redirect_to after_accepted_path, status: :see_other
     end
@@ -70,6 +70,13 @@ module AgreementEngine
       return false if minimum.zero?
 
       served_at.nil? || Time.current.to_i - served_at < minimum
+    end
+
+    def reading_evidence
+      minimum = @agreement.minimum_reading_seconds
+      return if minimum.zero?
+
+      {minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at}
     end
 
     def served_at

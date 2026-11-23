@@ -61,4 +61,12 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: terms_v2)
   end
+
+  test "the acceptance keeps the minimum time that applied and the seconds the server measured" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 42.seconds
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_equal({"minimum_seconds" => 30, "measured_seconds" => 42}, AgreementEngine::Acceptance.find_by(signer: @user, document: @terms).reading)
+  end
 end

@@ -65,6 +65,7 @@ ActiveRecord::Schema[8.0].define(version: 1) do
     t.datetime :snapshot_taken_at
     t.date :period_starts_on
     t.date :period_ends_on
+    t.json :reading
 
     t.timestamps
   end
