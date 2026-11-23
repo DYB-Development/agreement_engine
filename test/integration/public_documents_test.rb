@@ -22,6 +22,12 @@ class PublicDocumentsTest < ActionDispatch::IntegrationTest
     assert_match(/Version 1\.0/, response.body)
   end
 
+  test "a public document page renders in the host's application layout" do
+    get agreement_engine.terms_path
+
+    assert_select "body[data-layout=application]"
+  end
+
   test "privacy page loads successfully" do
     get agreement_engine.privacy_path
     assert_response :success
