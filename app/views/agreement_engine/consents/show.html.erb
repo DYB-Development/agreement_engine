@@ -5,14 +5,18 @@
 
   <div class="mt-8 sm:mt-16 text-center">
     <% if AgreementEngine.config.current_user(controller).held_consent %>
-      <p><%= t(".held") %></p>
+      <%= ui_paragraph(text: t(".held")) %>
       <div class="mt-4 flex items-center justify-center gap-2">
-        <%= button_to t(".withdraw"), agreement_engine.consent_path, method: :delete, class: "btn btn-secondary btn-large" %>
+        <%= ui_form(action: agreement_engine.consent_path, method: :delete) do %>
+          <%= ui_button(label: t(".withdraw"), variant: :secondary) %>
+        <% end %>
       </div>
     <% else %>
-      <p><%= t(".statement") %></p>
+      <%= ui_paragraph(text: t(".statement")) %>
       <div class="mt-4 flex items-center justify-center gap-2">
-        <%= button_to t(".consent"), agreement_engine.consent_path, method: :post, class: "btn btn-primary btn-large" %>
+        <%= ui_form(action: agreement_engine.consent_path, method: :post) do %>
+          <%= ui_button(label: t(".consent")) %>
+        <% end %>
       </div>
     <% end %>
   </div>

@@ -10,13 +10,18 @@ module AgreementEngine
     layout -> { AgreementEngine.config.layout }
 
     def show
+      record_served
     end
 
     def update
       if stale?
         @error = t("agreement_engine.signatures.update.stale")
         @version = current_version
+        record_served
         render :show, status: :conflict
+      elsif too_soon?
+        @error = t("agreement_engine.signatures.update.too_soon", document: @type.title, seconds: @type.minimum_reading_seconds)
+        render :show, status: :unprocessable_entity
       elsif already_signed?
         redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       elsif typed_name.blank?
@@ -30,7 +35,8 @@ module AgreementEngine
           statement: t("agreement_engine.signatures.show.statement", document: @type.title),
           button_text: t("agreement_engine.signatures.show.sign"),
           evidence: AgreementEngine.config.evidence(self, signer),
-          signature: {strength: "signature", typed_name: typed_name, consent: signer.held_consent}
+          signature: {strength: "signature", typed_name: typed_name, consent: signer.held_consent},
+          reading: reading_evidence
         )
         redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       end
@@ -39,6 +45,42 @@ module AgreementEngine
     end
 
     private
+
+    def record_served
+      served = session[:agreement_engine_served] ||= {}
+      served[@version.id.to_s] ||= Time.current.to_i
+    end
+
+    def too_soon?
+      minimum = @type.minimum_reading_seconds
+      return false if minimum.zero?
+
+      served_at.nil? || Time.current.to_i - served_at < minimum
+    end
+
+    def reading_evidence
+      evidence = {}
+      minimum = @type.minimum_reading_seconds
+      evidence.merge!(minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at) unless minimum.zero?
+      evidence.merge!(scroll: scroll_report) if @type.requires_scroll?
+      evidence.presence
+    end
+
+    def scroll_report
+      report = params[:reading]
+      return {reported_by: nil} unless report
+
+      {reported_by: "browser", end_reached: report[:end_reached] == "true", end_in_view_on_load: report[:end_in_view_on_load] == "true"}
+    end
+
+    def elapsed_reading_seconds
+      served_at ? Time.current.to_i - served_at : 0
+    end
+    helper_method :elapsed_reading_seconds
+
+    def served_at
+      session.dig(:agreement_engine_served, @version.id.to_s)
+    end
 
     def already_signed?
       @version.acceptances.exists?(signer: signer, strength: "signature")

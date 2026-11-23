@@ -1,37 +1,38 @@
 <div class="max-w-4xl mx-auto p-4 my-8 lg:my-24">
-  <h1 class="mb-4"><%= @type.title %></h1>
+  <%= ui_heading(text: @type.title, size: :lg) %>
 
   <% if (period = AgreementEngine::Period.describe(@version.frozen_copy.to_h["period"])) %>
-    <p class="mb-4 font-medium">Period: <%= period %></p>
+    <%= ui_paragraph(text: "Period: #{period}") %>
   <% end %>
-  <article class="prose prose-gray dark:prose-invert max-w-none">
-    <%= render "agreement_engine/documents/issued_version", document: @version %>
-  </article>
 
-  <%= form_with(scope: :signature, url: form_url, method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>
-    <%= form.hidden_field :content_hash, value: @version.content_hash %>
+  <%= ui_reading_hold(seconds: @type.minimum_reading_seconds, elapsed: elapsed_reading_seconds, require_end: @type.requires_scroll?, waiting: t("agreement_engine.signatures.show.waiting"), ready: t("agreement_engine.signatures.show.ready")) do |hold| %>
+    <% hold.with_action do %>
+      <%= form_with(scope: :signature, url: form_url, method: :patch, class: "mt-8 sm:mt-16 space-y-4") do |form| %>
+        <%= form.hidden_field :content_hash, value: @version.content_hash %>
 
-    <% if @error %>
-      <div class="bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
+        <% if @error %>
+          <%= ui_alert(message: @error, type: :error) %>
+        <% end %>
+
+        <% if @type.signature? %>
+          <%= ui_paragraph(text: t("agreement_engine.signatures.show.statement", document: @type.title)) %>
+
+          <%= ui_form_field(attribute: "signature[typed_name]", label: t("agreement_engine.signatures.show.typed_name"), value: params.dig(:signature, :typed_name), autocomplete: "name") %>
+
+          <div>
+            <%= ui_button(label: t("agreement_engine.signatures.show.sign"), data: {reading_hold_target: "button"}) %>
+          </div>
+        <% else %>
+          <%= ui_paragraph(text: t("agreement_engine.record_documents.show.statement", document: @type.title)) %>
+
+          <div>
+            <%= ui_button(label: t("agreement_engine.record_documents.show.accept"), data: {reading_hold_target: "button"}) %>
+          </div>
+        <% end %>
+      <% end %>
     <% end %>
-
-    <% if @type.signature? %>
-      <p><%= t("agreement_engine.signatures.show.statement", document: @type.title) %></p>
-
-      <div>
-        <%= form.label :typed_name, t("agreement_engine.signatures.show.typed_name"), class: "block text-sm font-medium text-gray-700" %>
-        <%= form.text_field :typed_name, autocomplete: "name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm" %>
-      </div>
-
-      <div>
-        <%= form.submit t("agreement_engine.signatures.show.sign"), class: "btn btn-primary btn-large" %>
-      </div>
-    <% else %>
-      <p><%= t("agreement_engine.record_documents.show.statement", document: @type.title) %></p>
-
-      <div>
-        <%= form.submit t("agreement_engine.record_documents.show.accept"), class: "btn btn-primary btn-large" %>
-      </div>
-    <% end %>
+    <article class="prose prose-gray dark:prose-invert max-w-none">
+      <%= render "agreement_engine/documents/issued_version", document: @version %>
+    </article>
   <% end %>
 </div>

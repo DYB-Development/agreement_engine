@@ -93,7 +93,7 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
 
     get agreement_engine.signature_path(:statement_of_work)
 
-    assert_select "p", text: "Period: 1 January 2027 to 30 June 2027"
+    assert_select "p.ks-paragraph", text: "Period: 1 January 2027 to 30 June 2027"
   end
 
   test "a signature submitted for a version that is no longer current is refused and the current one is shown" do
