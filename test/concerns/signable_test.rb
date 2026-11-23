@@ -48,6 +48,16 @@ class AgreementEngine::SignableTest < ActiveSupport::TestCase
     assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: @terms_v1)
   end
 
+  test "accept_version! of a type requiring opening, passed an opening of another version, fails naming the type" do
+    opened = {opened_on: "public_page", opened_at: "2026-11-23T09:00:00Z", version_id: @terms_v1.id + 1}
+
+    with_terms_requiring_opening do
+      error = assert_raises(ArgumentError) { @user.accept_version!(@terms_v1, reading: opened) }
+
+      assert_equal "Document type terms_of_service requires opening, and no opening of this version was passed.", error.message
+    end
+  end
+
   private
 
   def with_terms_requiring_opening
