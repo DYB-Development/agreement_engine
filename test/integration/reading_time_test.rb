@@ -34,4 +34,12 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_includes response.body, "Read the Terms Of Service for at least 30 seconds before accepting."
   end
+
+  test "an acceptance sent after the minimum time is recorded" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 30.seconds
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
+  end
 end
