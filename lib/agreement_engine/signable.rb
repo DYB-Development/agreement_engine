@@ -32,8 +32,8 @@ module AgreementEngine
       !accepted_current?(document_type)
     end
 
-    def accept_version!(version)
-      AgreementEngine::Acceptance.create!(signer: self, person: AgreementEngine::Acceptance.person_snapshot(self), document: version, content_hash: version.content_hash, byte_form_version: version.byte_form_version, accepted_at: Time.current)
+    def accept_version!(version, reading: nil)
+      AgreementEngine::Acceptance.create!(signer: self, person: AgreementEngine::Acceptance.person_snapshot(self), document: version, content_hash: version.content_hash, byte_form_version: version.byte_form_version, accepted_at: Time.current, reading: reading)
     end
   end
 end
