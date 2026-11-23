@@ -53,4 +53,8 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
 
     assert_equal "Document type quote cannot require opening, because per-record documents have no public page.", error.message
   end
+
+  test "a host registers a type that requires scrolling to the end" do
+    assert AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {scroll: true}).requires_scroll?
+  end
 end
