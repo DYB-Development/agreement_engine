@@ -30,4 +30,10 @@ class AcceptPageTest < ActionDispatch::IntegrationTest
 
     assert_select "button.ks-button-secondary", text: "I Decline"
   end
+
+  test "the accept page's statement sits with the accept button, after the document" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-action='click->reading-hold#guard'] p.ks-paragraph + form button", text: "I Accept"
+  end
 end

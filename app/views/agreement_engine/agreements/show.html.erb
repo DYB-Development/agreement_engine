@@ -9,6 +9,10 @@
     <% end %>
     <%= ui_reading_hold(seconds: @agreement.minimum_reading_seconds, elapsed: elapsed_reading_seconds, waiting: t(".waiting"), ready: t(".ready")) do |hold| %>
       <% hold.with_action do %>
+        <% if @error %>
+          <%= ui_alert(message: @error, type: :error) %>
+        <% end %>
+        <%= ui_paragraph(text: t(".description", agreement: @agreement.title)) %>
         <%= ui_form(action: agreement_engine.agreement_path(@agreement), method: :patch) do %>
           <%= ui_button(label: t(".accept"), data: {reading_hold_target: "button"}) %>
         <% end %>
@@ -22,12 +26,6 @@
   <% end %>
 
   <div class="mt-8 sm:mt-16">
-    <% if @error %>
-      <%= ui_alert(message: @error, type: :error) %>
-    <% end %>
-
-    <%= ui_paragraph(text: t(".description", agreement: @agreement.title)) %>
-
     <div class="mt-4 flex items-center justify-center gap-2">
       <%= ui_form(action: agreement_engine.agreement_path(@agreement), method: :delete) do %>
         <%= ui_button(label: t(".decline"), variant: :secondary) %>
