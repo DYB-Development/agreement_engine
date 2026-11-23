@@ -31,4 +31,10 @@ class AgreementEngine::ReceiptTest < ActiveSupport::TestCase
 
     assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "End of the document: reached, not in view when first shown, as reported by the browser"
   end
+
+  test "the copy says when the browser sent no report of reaching the end" do
+    acceptance = acceptance_with_reading({"scroll" => {"reported_by" => nil}})
+
+    assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "End of the document: not reported by the browser"
+  end
 end

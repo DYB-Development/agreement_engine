@@ -37,6 +37,7 @@ module AgreementEngine
 
     def scroll_line(scroll)
       return unless scroll
+      return "End of the document: not reported by the browser" unless scroll["reported_by"]
 
       reached = scroll["end_reached"] ? "reached" : "not reached"
       on_load = scroll["end_in_view_on_load"] ? "in view when first shown" : "not in view when first shown"
