@@ -4,7 +4,7 @@ module AgreementEngine
   class VerificationsController < ::ApplicationController
     skip_before_action :require_accepted_agreements!, raise: false
 
-    layout "agreement_engine/minimal"
+    layout -> { AgreementEngine.config.layout }
 
     def show
     end

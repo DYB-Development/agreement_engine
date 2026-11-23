@@ -6,6 +6,12 @@ class VerifyTest < ActionDispatch::IntegrationTest
     Rack::Test::UploadedFile.new(StringIO.new(content), "application/json", original_filename: "copy.json")
   end
 
+  test "the verify page renders in the host's application layout when the host names none" do
+    get agreement_engine.verification_path
+
+    assert_select "body[data-layout=application]"
+  end
+
   test "anyone, signed in or not, sees that a byte-form file matches its hash" do
     bytes = %({"document":{},"number":1,"period":null,"slug":"terms","values":{}})
 
