@@ -23,4 +23,14 @@ class HostLayoutTest < ActionDispatch::IntegrationTest
   ensure
     AgreementEngine.config.electronic_consent = false
   end
+
+  test "the gem's pages render in another layout the host names" do
+    AgreementEngine.config.layout = "portal"
+
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "body[data-layout=portal]"
+  ensure
+    AgreementEngine.config.layout = "application"
+  end
 end
