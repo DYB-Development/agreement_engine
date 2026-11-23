@@ -7,7 +7,7 @@ module AgreementEngine
     before_action :set_type_and_version
     before_action :require_consent
 
-    layout "agreement_engine/minimal"
+    layout -> { AgreementEngine.config.layout }
 
     def show
     end
