@@ -29,4 +29,12 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_includes response.body, "Read the Statement of Work for at least 30 seconds before signing."
   end
+
+  test "a signature keeps the minimum time that applied and the seconds the server measured" do
+    get agreement_engine.signature_path(:statement_of_work)
+    travel 31.seconds
+    sign
+
+    assert_equal({"minimum_seconds" => 30, "measured_seconds" => 31}, AgreementEngine::Acceptance.find_by(signer: @user, document: @sow).reading)
+  end
 end

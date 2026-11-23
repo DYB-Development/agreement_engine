@@ -34,7 +34,8 @@ module AgreementEngine
           statement: t("agreement_engine.signatures.show.statement", document: @type.title),
           button_text: t("agreement_engine.signatures.show.sign"),
           evidence: AgreementEngine.config.evidence(self, signer),
-          signature: {strength: "signature", typed_name: typed_name, consent: signer.held_consent}
+          signature: {strength: "signature", typed_name: typed_name, consent: signer.held_consent},
+          reading: reading_evidence
         )
         redirect_to after_signing_path, status: :see_other, notice: t("agreement_engine.signatures.update.signed", document: @type.title)
       end
@@ -54,6 +55,13 @@ module AgreementEngine
       return false if minimum.zero?
 
       served_at.nil? || Time.current.to_i - served_at < minimum
+    end
+
+    def reading_evidence
+      evidence = {}
+      minimum = @type.minimum_reading_seconds
+      evidence.merge!(minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at) unless minimum.zero?
+      evidence.presence
     end
 
     def served_at
