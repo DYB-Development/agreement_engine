@@ -15,6 +15,10 @@
   <% end %>
 
   <div class="mt-8 sm:mt-16">
+    <% if @error %>
+      <div class="mb-4 bg-red-50 border border-red-200 rounded p-4 text-red-700"><%= @error %></div>
+    <% end %>
+
     <div class="text-center">
       <%= t(".description", agreement: @agreement.title) %>
     </div>

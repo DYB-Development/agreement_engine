@@ -10,11 +10,14 @@ module AgreementEngine
     layout "agreement_engine/minimal"
 
     def show
+      record_served
     end
 
     def update
+      return refuse(t(".too_soon", agreement: @agreement.title, seconds: @agreement.minimum_reading_seconds)) if @version && too_soon?
+
       if @version
-        AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request, statement: t("agreement_engine.agreements.show.description", agreement: @agreement.title), button_text: t("agreement_engine.agreements.show.accept"), evidence: AgreementEngine.config.evidence(self, agreement_engine_current_user))
+        AgreementEngine::Acceptance.record!(signer: agreement_engine_current_user, document: @version, request: request, statement: t("agreement_engine.agreements.show.description", agreement: @agreement.title), button_text: t("agreement_engine.agreements.show.accept"), evidence: AgreementEngine.config.evidence(self, agreement_engine_current_user), reading: reading_evidence)
       end
       redirect_to after_accepted_path, status: :see_other
     end
@@ -48,6 +51,36 @@ module AgreementEngine
 
     def set_version
       @version = @agreement && AgreementEngine::Document.current(@agreement.key)
+    end
+
+    def refuse(reason)
+      @error = reason
+      render :show, status: :unprocessable_entity
+    end
+
+    def record_served
+      return unless @version
+
+      served = session[:agreement_engine_served] ||= {}
+      served[@version.id.to_s] ||= Time.current.to_i
+    end
+
+    def too_soon?
+      minimum = @agreement.minimum_reading_seconds
+      return false if minimum.zero?
+
+      served_at.nil? || Time.current.to_i - served_at < minimum
+    end
+
+    def reading_evidence
+      minimum = @agreement.minimum_reading_seconds
+      return if minimum.zero?
+
+      {minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at}
+    end
+
+    def served_at
+      session.dig(:agreement_engine_served, @version.id.to_s)
     end
 
     def after_accepted_path

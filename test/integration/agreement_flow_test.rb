@@ -44,6 +44,15 @@ class AgreementFlowTest < ActionDispatch::IntegrationTest
     assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms_v1)
   end
 
+  test "accepting a type with no reading requirement keeps no reading evidence" do
+    accept(@privacy_v1)
+    sign_in @user
+
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_nil AgreementEngine::Acceptance.find_by(signer: @user, document: @terms_v1).reading
+  end
+
   test "declining agreement signs user out" do
     accept(@privacy_v1)
     sign_in @user
