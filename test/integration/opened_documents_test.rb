@@ -17,4 +17,13 @@ class OpenedDocumentsTest < ActionDispatch::IntegrationTest
 
     assert_nil response.parsed_body
   end
+
+  test "host code sees when the session first opened the public page" do
+    opened = @terms.effective_at.change(usec: 0) + 1.hour
+    travel_to(opened) { get agreement_engine.terms_path }
+    travel_to(opened + 5.minutes) { get agreement_engine.terms_path }
+    get opened_check_path(:terms_of_service)
+
+    assert_equal opened.iso8601, response.parsed_body["opened_at"]
+  end
 end
