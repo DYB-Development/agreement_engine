@@ -2,7 +2,7 @@
   <%= ui_heading(text: @type.title, size: :lg) %>
 
   <% if (period = AgreementEngine::Period.describe(@version.frozen_copy.to_h["period"])) %>
-    <p class="mb-4 font-medium">Period: <%= period %></p>
+    <%= ui_paragraph(text: "Period: #{period}") %>
   <% end %>
 
   <%= ui_reading_hold(seconds: @type.minimum_reading_seconds, elapsed: elapsed_reading_seconds, require_end: @type.requires_scroll?, waiting: t("agreement_engine.signatures.show.waiting"), ready: t("agreement_engine.signatures.show.ready")) do |hold| %>
