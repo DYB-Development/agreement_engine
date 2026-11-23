@@ -69,4 +69,11 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_equal({"minimum_seconds" => 30, "measured_seconds" => 42}, AgreementEngine::Acceptance.find_by(signer: @user, document: @terms).reading)
   end
+
+  test "declining is not held back by the minimum reading time" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    delete agreement_engine.agreement_path(:terms_of_service)
+
+    assert_redirected_to "/"
+  end
 end
