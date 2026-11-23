@@ -25,4 +25,10 @@ class AgreementEngine::ReceiptTest < ActiveSupport::TestCase
 
     assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "Reading time: 30 seconds required, 42 seconds measured by the server"
   end
+
+  test "the copy lists the browser's report of reaching the end, marked as reported by the browser" do
+    acceptance = acceptance_with_reading({"scroll" => {"reported_by" => "browser", "end_reached" => true, "end_in_view_on_load" => false}})
+
+    assert_includes AgreementEngine::Receipt.summary_lines(acceptance), "End of the document: reached, not in view when first shown, as reported by the browser"
+  end
 end

@@ -24,6 +24,7 @@ module AgreementEngine
         ("Typed name: #{acceptance.typed_name}" if acceptance.typed_name.present?),
         period_line(acceptance),
         reading_time_line(acceptance.reading.to_h),
+        scroll_line(acceptance.reading.to_h["scroll"]),
         "agreement_engine #{acceptance.engine_version}, keystone_ui-pages #{acceptance.pages_version}"
       ].compact
     end
@@ -32,6 +33,14 @@ module AgreementEngine
       return unless reading["minimum_seconds"]
 
       "Reading time: #{reading["minimum_seconds"]} seconds required, #{reading["measured_seconds"]} seconds measured by the server"
+    end
+
+    def scroll_line(scroll)
+      return unless scroll
+
+      reached = scroll["end_reached"] ? "reached" : "not reached"
+      on_load = scroll["end_in_view_on_load"] ? "in view when first shown" : "not in view when first shown"
+      "End of the document: #{reached}, #{on_load}, as reported by the browser"
     end
 
     def period_line(acceptance)
