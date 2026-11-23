@@ -22,6 +22,14 @@ class SignatureFlowTest < ActionDispatch::IntegrationTest
     @consent = AgreementEngine::Acceptance.create!(signer: @user, document: @consent_version, accepted_at: 1.hour.ago)
   end
 
+  test "the signing page renders in the host's application layout when the host names none" do
+    give_consent
+
+    get agreement_engine.signature_path(:statement_of_work)
+
+    assert_select "body[data-layout=application]"
+  end
+
   test "the signing page asks for a typed full name beside wording that says it is a signature" do
     give_consent
 

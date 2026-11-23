@@ -33,6 +33,12 @@ class RecordDocumentFlowTest < ActionDispatch::IntegrationTest
     assert_select "h2, h1, h3, div", text: /Acme Co/
   end
 
+  test "a record's document page renders in the host's application layout when the host names none" do
+    get agreement_engine.record_document_path(@plan_document)
+
+    assert_select "body[data-layout=application]"
+  end
+
   test "a person the host refuses cannot see a record's document" do
     sign_in User.create!(name: "Someone Else", email: "else@example.com")
 

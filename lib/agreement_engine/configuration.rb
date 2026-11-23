@@ -17,10 +17,12 @@ module AgreementEngine
     attr_accessor :copy_email_types
     attr_accessor :mailer_from
     attr_accessor :pages_place
+    attr_accessor :layout
 
     def initialize
       @document_types = []
       @copy_email_types = []
+      @layout = "application"
 
       @current_user_method = ->(c) { c.current_user }
       @signed_in_method = ->(c) { c.user_signed_in? }

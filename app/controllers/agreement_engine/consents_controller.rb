@@ -6,7 +6,7 @@ module AgreementEngine
     before_action :require_signed_in
     before_action :set_version
 
-    layout "agreement_engine/minimal"
+    layout -> { AgreementEngine.config.layout }
 
     def show
     end
