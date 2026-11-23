@@ -22,6 +22,10 @@ module AgreementEngine
       reading.to_h[:seconds].to_i
     end
 
+    def requires_opening?
+      reading.to_h[:open] == true
+    end
+
     def to_param = key.to_s
   end
 end

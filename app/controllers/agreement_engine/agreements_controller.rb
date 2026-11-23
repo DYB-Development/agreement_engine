@@ -73,10 +73,11 @@ module AgreementEngine
     end
 
     def reading_evidence
+      evidence = {}
       minimum = @agreement.minimum_reading_seconds
-      return if minimum.zero?
-
-      {minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at}
+      evidence.merge!(minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at) unless minimum.zero?
+      evidence.merge!(opened_on: "accept_page", opened_at: Time.zone.at(served_at).iso8601) if @agreement.requires_opening? && served_at
+      evidence.presence
     end
 
     def served_at

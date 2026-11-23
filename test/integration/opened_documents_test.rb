@@ -54,4 +54,17 @@ class OpenedDocumentsTest < ActionDispatch::IntegrationTest
 
     assert_equal "public_page", response.parsed_body["opened_on"]
   end
+
+  test "the gem's accept page meets an open requirement and records that it showed the document" do
+    registered = AgreementEngine.config.document_types
+    AgreementEngine.config.document_types = [AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true, reading: {open: true})]
+    user = User.create!(name: "Test User", email: "test@example.com")
+    sign_in user
+    get agreement_engine.agreement_path(:terms_of_service)
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_equal "accept_page", AgreementEngine::Acceptance.find_by(signer: user, document: @terms).reading["opened_on"]
+  ensure
+    AgreementEngine.config.document_types = registered
+  end
 end
