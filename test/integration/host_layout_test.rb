@@ -12,4 +12,15 @@ class HostLayoutTest < ActionDispatch::IntegrationTest
 
     assert_select "body[data-layout=application]"
   end
+
+  test "the consent page renders in the host's application layout when the host names none" do
+    AgreementEngine.config.electronic_consent = true
+    AgreementEngine::Consent.seed!
+
+    get agreement_engine.consent_path
+
+    assert_select "body[data-layout=application]"
+  ensure
+    AgreementEngine.config.electronic_consent = false
+  end
 end
