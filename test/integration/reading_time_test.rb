@@ -110,4 +110,12 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "[data-controller=reading-hold][data-reading-hold-require-end-value=true]"
   end
+
+  test "the accept page of a type requiring scrolling and a minimum time holds the button for both" do
+    AgreementEngine.config.document_types = [AgreementEngine::DocumentType.new(key: :terms_of_service, title: "Terms Of Service", kind: :standing, strength: :click_accept, prompts: true, reading: {seconds: 30, scroll: true})]
+
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold][data-reading-hold-require-end-value=true][data-reading-hold-seconds-value='30']"
+  end
 end
