@@ -31,4 +31,26 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
 
     assert_equal "plan-sign-off", plan.template
   end
+
+  test "a reading requirement with an unknown setting is refused with a message naming the type and the setting" do
+    error = assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {secs: 30}) }
+
+    assert_equal "Document type nda has an unknown reading setting: secs.", error.message
+  end
+
+  test "a minimum reading time of zero seconds is refused with a message naming the type" do
+    error = assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {seconds: 0}) }
+
+    assert_equal "Document type nda needs its minimum reading time as a positive whole number of seconds.", error.message
+  end
+
+  test "a minimum reading time given as a fraction of a second is refused" do
+    assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {seconds: 2.5}) }
+  end
+
+  test "an open requirement on a per-record type is refused because per-record documents have no public page" do
+    error = assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :quote, title: "Quote", kind: :per_record, strength: :click_accept, template: "quote", reading: {open: true}) }
+
+    assert_equal "Document type quote cannot require opening, because per-record documents have no public page.", error.message
+  end
 end
