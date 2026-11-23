@@ -43,4 +43,8 @@ class AgreementEngine::DocumentTypeTest < ActiveSupport::TestCase
 
     assert_equal "Document type nda needs its minimum reading time as a positive whole number of seconds.", error.message
   end
+
+  test "a minimum reading time given as a fraction of a second is refused" do
+    assert_raises(ArgumentError) { AgreementEngine::DocumentType.new(key: :nda, title: "Mutual NDA", kind: :standing, strength: :click_accept, reading: {seconds: 2.5}) }
+  end
 end
