@@ -80,6 +80,11 @@ module AgreementEngine
       evidence.presence
     end
 
+    def elapsed_reading_seconds
+      served_at ? Time.current.to_i - served_at : 0
+    end
+    helper_method :elapsed_reading_seconds
+
     def served_at
       session.dig(:agreement_engine_served, @version.id.to_s)
     end

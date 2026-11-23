@@ -7,6 +7,8 @@ en:
         description: "Before you can proceed, you must read and accept the new %{agreement}."
         accept: "I Accept"
         decline: "I Decline"
+        waiting: "You can accept in {seconds} seconds."
+        ready: "You can now accept."
       update:
         too_soon: "Read the %{agreement} for at least %{seconds} seconds before accepting."
       destroy:

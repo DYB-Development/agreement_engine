@@ -95,7 +95,7 @@ class AcceptanceEvidenceTest < ActionDispatch::IntegrationTest
 
     get agreement_engine.agreement_path(:terms_of_service)
 
-    assert_select "p", text: "Period: 1 year from acceptance"
+    assert_select "p.ks-paragraph", text: "Period: 1 year from acceptance"
   end
 
   test "the accept page draws the issued version from its frozen copy" do

@@ -26,7 +26,7 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
     get agreement_engine.agreement_path(:terms_of_service)
     patch agreement_engine.agreement_path(:terms_of_service)
 
-    assert_includes response.body, "Read the Terms Of Service for at least 30 seconds before accepting."
+    assert_select ".ks-alert-error", text: "Read the Terms Of Service for at least 30 seconds before accepting."
   end
 
   test "an acceptance sent when the accept page was never served is refused with the reason" do
@@ -75,5 +75,31 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
     delete agreement_engine.agreement_path(:terms_of_service)
 
     assert_redirected_to "/"
+  end
+
+  test "the accept page holds the accept button for the minimum reading time" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold][data-reading-hold-seconds-value='30'] button[data-reading-hold-target=button]", text: "I Accept"
+  end
+
+  test "the hold counts from when the server first served the accept page" do
+    get agreement_engine.agreement_path(:terms_of_service)
+    travel 12.seconds
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold][data-reading-hold-elapsed-value='12']"
+  end
+
+  test "the accept button is sent available, so without JavaScript it can still be pressed" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "button[data-reading-hold-target=button]:not([disabled]):not([aria-disabled])", text: "I Accept"
+  end
+
+  test "the decline button is outside the reading hold, so it is never held" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold] button", text: "I Decline", count: 0
   end
 end
