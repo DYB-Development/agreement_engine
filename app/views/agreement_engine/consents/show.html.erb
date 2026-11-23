@@ -10,7 +10,7 @@
         <%= button_to t(".withdraw"), agreement_engine.consent_path, method: :delete, class: "btn btn-secondary btn-large" %>
       </div>
     <% else %>
-      <p><%= t(".statement") %></p>
+      <%= ui_paragraph(text: t(".statement")) %>
       <div class="mt-4 flex items-center justify-center gap-2">
         <%= ui_form(action: agreement_engine.consent_path, method: :post) do %>
           <%= ui_button(label: t(".consent")) %>

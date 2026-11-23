@@ -34,4 +34,10 @@ class ConsentFlowTest < ActionDispatch::IntegrationTest
 
     assert_select "button.ks-button", text: "I Consent"
   end
+
+  test "the consent page's statement is a keystone_ui paragraph" do
+    get agreement_engine.consent_path
+
+    assert_select "p.ks-paragraph", text: /I agree to receive and sign records electronically/
+  end
 end
