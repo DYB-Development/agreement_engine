@@ -8,6 +8,8 @@ module AgreementEngine
       unknown = reading.to_h.keys - reading_settings
       raise ArgumentError, "Document type #{key} has an unknown reading setting: #{unknown.join(", ")}." if unknown.any?
 
+      raise ArgumentError, "Document type #{key} cannot require opening, because per-record documents have no public page." if reading.to_h[:open] && kind.to_sym == :per_record
+
       seconds = reading.to_h[:seconds]
       raise ArgumentError, "Document type #{key} needs its minimum reading time as a positive whole number of seconds." unless seconds.nil? || (seconds.is_a?(Integer) && seconds.positive?)
 
