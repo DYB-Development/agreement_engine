@@ -7,9 +7,16 @@
     <% if (period = AgreementEngine::Period.describe(@version.frozen_copy.to_h["period"])) %>
       <p class="mb-4 font-medium">Period: <%= period %></p>
     <% end %>
-    <article class="prose prose-gray dark:prose-invert max-w-none">
-      <%= render "agreement_engine/documents/issued_version", document: @version %>
-    </article>
+    <%= ui_reading_hold(seconds: @agreement.minimum_reading_seconds, elapsed: elapsed_reading_seconds, waiting: t(".waiting"), ready: t(".ready")) do |hold| %>
+      <% hold.with_action do %>
+        <%= ui_form(action: agreement_engine.agreement_path(@agreement), method: :patch) do %>
+          <%= ui_button(label: t(".accept"), data: {reading_hold_target: "button"}) %>
+        <% end %>
+      <% end %>
+      <article class="prose prose-gray dark:prose-invert max-w-none">
+        <%= render "agreement_engine/documents/issued_version", document: @version %>
+      </article>
+    <% end %>
   <% else %>
     <p class="text-gray-500">No version has been published yet.</p>
   <% end %>
@@ -25,7 +32,6 @@
 
     <div class="mt-4 flex items-center justify-center gap-2">
       <%= button_to t(".decline"), agreement_engine.agreement_path(@agreement), method: :delete, class: "btn btn-secondary btn-large" %>
-      <%= button_to t(".accept"), agreement_engine.agreement_path(@agreement), method: :patch, class: "btn btn-primary btn-large" %>
     </div>
   </div>
 </div>

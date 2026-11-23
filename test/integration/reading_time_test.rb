@@ -76,4 +76,10 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to "/"
   end
+
+  test "the accept page holds the accept button for the minimum reading time" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold][data-reading-hold-seconds-value='30'] button[data-reading-hold-target=button]", text: "I Accept"
+  end
 end
