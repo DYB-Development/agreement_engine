@@ -1,5 +1,5 @@
 <div class="max-w-4xl mx-auto p-4 my-8 lg:my-24">
-  <h1 class="mb-4"><%= @type.title %></h1>
+  <%= ui_heading(text: @type.title, size: :lg) %>
 
   <% if (period = AgreementEngine::Period.describe(@version.frozen_copy.to_h["period"])) %>
     <p class="mb-4 font-medium">Period: <%= period %></p>

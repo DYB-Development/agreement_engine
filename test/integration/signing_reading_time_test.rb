@@ -72,4 +72,10 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "input[name='signature[typed_name]'][value='Pat Lee']"
   end
+
+  test "the signing page's heading is a keystone_ui heading" do
+    get agreement_engine.signature_path(:statement_of_work)
+
+    assert_select ".ks-heading-lg", text: "Statement of Work"
+  end
 end
