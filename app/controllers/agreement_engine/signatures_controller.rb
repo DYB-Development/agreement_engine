@@ -61,7 +61,15 @@ module AgreementEngine
       evidence = {}
       minimum = @type.minimum_reading_seconds
       evidence.merge!(minimum_seconds: minimum, measured_seconds: Time.current.to_i - served_at) unless minimum.zero?
+      evidence.merge!(scroll: scroll_report) if @type.requires_scroll?
       evidence.presence
+    end
+
+    def scroll_report
+      report = params[:reading]
+      return {reported_by: nil} unless report
+
+      {reported_by: "browser", end_reached: report[:end_reached] == "true", end_in_view_on_load: report[:end_in_view_on_load] == "true"}
     end
 
     def served_at

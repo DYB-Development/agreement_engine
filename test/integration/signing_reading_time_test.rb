@@ -37,4 +37,12 @@ class SigningReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_equal({"minimum_seconds" => 30, "measured_seconds" => 31}, AgreementEngine::Acceptance.find_by(signer: @user, document: @sow).reading)
   end
+
+  test "a signature of a type requiring scrolling keeps the browser's scroll report" do
+    AgreementEngine.config.document_types = [AgreementEngine::DocumentType.new(key: :statement_of_work, title: "Statement of Work", kind: :standing, strength: :signature, reading: {scroll: true})]
+    get agreement_engine.signature_path(:statement_of_work)
+    patch agreement_engine.signature_path(:statement_of_work), params: {signature: {typed_name: "Pat Lee", content_hash: @sow.content_hash}, reading: {end_reached: "true", end_in_view_on_load: "true"}}
+
+    assert_equal({"reported_by" => "browser", "end_reached" => true, "end_in_view_on_load" => true}, AgreementEngine::Acceptance.find_by(signer: @user, document: @sow).reading["scroll"])
+  end
 end
