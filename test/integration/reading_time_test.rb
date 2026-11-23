@@ -96,4 +96,10 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert_select "button[data-reading-hold-target=button]:not([disabled]):not([aria-disabled])", text: "I Accept"
   end
+
+  test "the decline button is outside the reading hold, so it is never held" do
+    get agreement_engine.agreement_path(:terms_of_service)
+
+    assert_select "[data-controller=reading-hold] button", text: "I Decline", count: 0
+  end
 end
