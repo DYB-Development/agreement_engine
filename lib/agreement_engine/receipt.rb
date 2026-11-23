@@ -23,8 +23,15 @@ module AgreementEngine
         "Accepted: #{acceptance.accepted_at.utc.strftime("%Y-%m-%d %H:%M:%S UTC")}",
         ("Typed name: #{acceptance.typed_name}" if acceptance.typed_name.present?),
         period_line(acceptance),
+        reading_time_line(acceptance.reading.to_h),
         "agreement_engine #{acceptance.engine_version}, keystone_ui-pages #{acceptance.pages_version}"
       ].compact
+    end
+
+    def reading_time_line(reading)
+      return unless reading["minimum_seconds"]
+
+      "Reading time: #{reading["minimum_seconds"]} seconds required, #{reading["measured_seconds"]} seconds measured by the server"
     end
 
     def period_line(acceptance)
