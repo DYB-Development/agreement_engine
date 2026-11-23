@@ -26,4 +26,12 @@ class OpenedDocumentsTest < ActionDispatch::IntegrationTest
 
     assert_equal opened.iso8601, response.parsed_body["opened_at"]
   end
+
+  test "opening an earlier version does not count as opening a newly issued one" do
+    get agreement_engine.terms_path
+    AgreementEngine::Document.create!(document_type: "terms_of_service", version: "2.0", content: "Terms v2 content", effective_at: Time.current)
+    get opened_check_path(:terms_of_service)
+
+    assert_nil response.parsed_body
+  end
 end
