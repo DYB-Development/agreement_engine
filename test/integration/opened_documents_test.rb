@@ -34,4 +34,14 @@ class OpenedDocumentsTest < ActionDispatch::IntegrationTest
 
     assert_nil response.parsed_body
   end
+
+  test "opening the public page while signed in is recorded" do
+    user = User.create!(name: "Test User", email: "test@example.com")
+    AgreementEngine::Acceptance.create!(signer: user, document: @terms, accepted_at: 1.day.ago)
+    sign_in user
+    get agreement_engine.terms_path
+    get opened_check_path(:terms_of_service)
+
+    assert_equal "public_page", response.parsed_body["opened_on"]
+  end
 end
