@@ -61,3 +61,4 @@ end
 require_relative "agreement_engine/engine"
 require_relative "agreement_engine/signable"
 require_relative "agreement_engine/enforceable"
+require_relative "agreement_engine/reading_check"

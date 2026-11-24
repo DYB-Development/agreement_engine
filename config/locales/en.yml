@@ -1,5 +1,9 @@
 en:
   agreement_engine:
+    reading:
+      too_soon:
+        accepting: "Read the %{document} for at least %{seconds} seconds before accepting."
+        signing: "Read the %{document} for at least %{seconds} seconds before signing."
     agreements:
       show:
         title: "%{agreement} Changed"
@@ -10,7 +14,6 @@ en:
         waiting: "You can accept in {seconds} seconds."
         ready: "You can now accept."
       update:
-        too_soon: "Read the %{agreement} for at least %{seconds} seconds before accepting."
       destroy:
         declined: "To continue using the service, please sign in and accept the %{agreement}."
     consents:
@@ -33,7 +36,6 @@ en:
       update:
         blank: "Type your full name to sign."
         stale: "This document changed while you were reading it. Read the current version below and sign again."
-        too_soon: "Read the %{document} for at least %{seconds} seconds before signing."
         signed: "You signed the %{document}."
     record_documents:
       show:
@@ -41,7 +43,6 @@ en:
         accept: "I Accept"
       update:
         accepted: "You accepted the %{document}."
-        too_soon: "Read the %{document} for at least %{seconds} seconds before accepting."
     receipt_mailer:
       copy:
         subject: "Your copy of the %{document}"
