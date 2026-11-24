@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-11-23
+
+### Added
+
+- A document type takes `reading:` with `seconds:`, `scroll: true` or `open: true`, and the accept, signing and record pages refuse an acceptance or signature sent before the minimum time has passed since the page was first shown (#57, #64)
+- The accept, signing and record pages hold their button with keystone_ui's reading hold, showing the seconds left and waiting for the end of the document when scrolling is required (#62, #63, #64)
+- Each acceptance and signature keeps its reading evidence: the minimum time and the seconds the server measured, the browser's report of reaching the end, and where and when the document was opened (#57, #59, #63, #64)
+- Host code asks `agreement_engine_opened(:type)` whether the session opened a document's public page, and `accept_version!` takes the answer as `reading:` (#59)
+- The signer's copy lists the reading evidence, and the acceptance event exposes it as `reading` (#66)
+- `config.layout` names the layout the accept, consent, signing, record and verification pages render in (#58)
+
+### Changed
+
+- The gem's accept, consent, signing, record and verification pages render in the host's `application` layout by default; name `"agreement_engine/minimal"` to keep the old look (#58)
+- The accept, signing, record and consent pages are drawn with keystone_ui components, and a refused signature keeps its typed name (#62, #64)
+- agreement_engine depends on keystone_ui 0.106.0 or later (#62)
+- A mistyped reading requirement stops the app at boot, and host code accepting a type that requires opening without an opening of that version raises (#60, #61)
+
+### Fixed
+
+- An acceptance refused on the accept page now counts the time spent on the page shown with the refusal toward the minimum reading time (#68)
+
 ## [0.2.2] - 2026-11-20
 
 ### Added
