@@ -57,6 +57,7 @@ module AgreementEngine
 
     def refuse(reason)
       @error = reason
+      record_served
       render :show, status: :unprocessable_entity
     end
 
