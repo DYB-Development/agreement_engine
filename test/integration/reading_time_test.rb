@@ -144,4 +144,13 @@ class ReadingTimeTest < ActionDispatch::IntegrationTest
 
     assert AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
   end
+
+  test "after a refusal because the page was never served, accepting again before the minimum time is still refused" do
+    freeze_time
+    patch agreement_engine.agreement_path(:terms_of_service)
+    travel 10.seconds
+    patch agreement_engine.agreement_path(:terms_of_service)
+
+    assert_not AgreementEngine::Acceptance.exists?(signer: @user, document: @terms)
+  end
 end
